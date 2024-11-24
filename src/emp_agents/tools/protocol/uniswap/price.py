@@ -1,10 +1,11 @@
 from typing import Annotated, Literal
-from typing_extensions import Doc
 
 from eth_rpc.networks import get_network_by_name
-from eth_typing import HexAddress
-from eth_typeshed.uniswap_v2.factory import UniswapV2Factory, GetPairRequest
+from eth_typeshed.uniswap_v2.factory import GetPairRequest, UniswapV2Factory
 from eth_typeshed.uniswap_v2.pair import UniswapV2Pair
+from eth_typing import HexAddress
+from typing_extensions import Doc
+
 from .constants import FACTORY_ADDRESSES
 
 

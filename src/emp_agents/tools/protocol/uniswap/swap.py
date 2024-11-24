@@ -1,15 +1,16 @@
 from datetime import datetime, timezone
 from typing import Annotated, Literal
-from typing_extensions import Doc
 
 from eth_rpc.networks import get_network_by_name
-from eth_typing import HexAddress, HexStr
 from eth_typeshed.erc20 import ERC20
 from eth_typeshed.uniswap_v2.router.contract import (
-    UniswapV2Router,
-    TokenSwapRequest,
     EthSwapRequest,
+    TokenSwapRequest,
+    UniswapV2Router,
 )
+from eth_typing import HexAddress, HexStr
+from typing_extensions import Doc
+
 from .constants import ROUTER_ADDRESSES
 
 

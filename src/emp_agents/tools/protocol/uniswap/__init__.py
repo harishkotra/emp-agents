@@ -1,9 +1,11 @@
 import json
 from typing import Annotated, Literal
-from typing_extensions import Doc
 
 from eth_typing import HexAddress, HexStr
-from emp_agents.models.protocol import SkillSet, view_action, onchain_action
+from typing_extensions import Doc
+
+from emp_agents.models.protocol import SkillSet, onchain_action, view_action
+
 from .price import get_price
 from .swap import (
     swap_exact_eth_for_tokens,

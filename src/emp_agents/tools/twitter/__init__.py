@@ -3,7 +3,8 @@ from typing import Annotated
 from typing_extensions import Doc
 
 from emp_agents.models.protocol import SkillSet, tool_method
-from .actions import make_tweet, make_tweet_with_image, make_poll, reply_to_tweet
+
+from .actions import make_poll, make_tweet, make_tweet_with_image, reply_to_tweet
 
 
 class TwitterSkill(SkillSet):
