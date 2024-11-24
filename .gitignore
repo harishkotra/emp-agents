@@ -163,3 +163,5 @@ cython_debug/
 
 # scratch space
 scratch.py
+
+docs/site

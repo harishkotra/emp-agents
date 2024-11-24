@@ -34,7 +34,7 @@ By creating consistent abstractions across different AI providers like OpenAI an
 All the libraries in eth-packages works on Linux, macOS, Windows and most Unix-style operating systems. You can install it with pip as usual:
 
 ```sh
-pip install emp-agents eth-rpc-py eth-typeshed-py
+pip install emp-agents
 ```
 
 !!! tip

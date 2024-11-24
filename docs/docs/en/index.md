@@ -32,11 +32,8 @@ By creating consistent abstractions across different AI providers like OpenAI an
 All the libraries in eth-packages works on Linux, macOS, Windows and most Unix-style operating systems. You can install it with pip as usual:
 
 ```sh
-pip install emp-agents eth-rpc-py eth-typeshed-py
+pip install emp-agents
 ```
 
 !!! tip
     eth-packages are libraries for RPC/Onchain interactions. They facilitate execution of onchain actions by providing typed interfaces, RPC connections, and contract abstractions that agents can use to interact with various blockchain networks.
----
-
-# Quickstart
