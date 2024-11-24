@@ -1,7 +1,6 @@
 import pytest
 
 from emp_agents.agents.persistentagent import PersistentAgent, PersistentAgentConfig
-from emp_agents.tools import __all__
 
 
 @pytest.mark.asyncio(scope="session")

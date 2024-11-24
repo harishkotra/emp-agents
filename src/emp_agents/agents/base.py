@@ -1,7 +1,9 @@
+import asyncio
+import os
 from textwrap import dedent
 from typing import Any, Callable
 
-from pydantic import BaseModel, Field, PrivateAttr, field_validator
+from pydantic import BaseModel, Field, PrivateAttr, computed_field, field_validator
 
 from emp_agents.exceptions import InvalidModelException
 from emp_agents.models import AnthropicBase, GenericTool, Message, OpenAIBase, Request
@@ -18,11 +20,26 @@ class AgentBase(BaseModel):
     tools: list[GenericTool] = Field(default_factory=list)
     conversation_history: list[Message] = Field(default_factory=list)
     requires: list[str] = []
-    openai_api_key: str | None = None
-    anthropic_api_key: str | None = None
+    openai_api_key: str | None = Field(
+        default_factory=lambda: os.environ.get("OPENAI_API_KEY")
+    )
+    anthropic_api_key: str | None = Field(
+        default_factory=lambda: os.environ.get("ANTHROPIC_API_KEY")
+    )
 
     _tools: list[GenericTool] = PrivateAttr(default_factory=list)
     _tools_map: dict[str, Callable[..., Any]] = PrivateAttr(default_factory=dict)
+
+    @computed_field
+    @property
+    def _default_model(self) -> OpenAIModelType | AnthropicModelType:
+        if self.default_model:
+            return self.default_model
+        if self.openai_api_key:
+            return OpenAIModelType.gpt4o_mini
+        elif self.anthropic_api_key:
+            return AnthropicModelType.claude_3_opus
+        raise ValueError("No API key found")
 
     @field_validator("prompt", mode="before")
     @classmethod
@@ -40,6 +57,9 @@ class AgentBase(BaseModel):
         ]
 
     def model_post_init(self, _context: Any):
+        if not (self.openai_api_key or self.anthropic_api_key):
+            raise ValueError("Must provide either openai or anthropic api key")
+
         for tool in self.tools:
             if isinstance(tool, GenericTool):
                 self._tools.append(tool)
@@ -134,7 +154,7 @@ class AgentBase(BaseModel):
     async def answer(
         self,
         question: str,
-        model: OpenAIModelType | AnthropicModelType = OpenAIModelType.gpt4o_mini,
+        model: OpenAIModelType | AnthropicModelType | None = None,
     ) -> str:
         self.conversation_history += [Message(role=Role.user, content=question)]
         response = await self.complete(
@@ -183,13 +203,20 @@ class AgentBase(BaseModel):
         return None
 
     async def complete(
-        self, model: OpenAIModelType | AnthropicModelType, verbose: bool = False
+        self,
+        model: OpenAIModelType | AnthropicModelType | None = None,
+        verbose: bool = False,
     ) -> str:
+        if not model:
+            model = self._default_model
+        assert model is not None, "Model is required"
         client: OpenAIBase | AnthropicBase = self._make_client(model)
 
         while True:
             request = Request(
-                messages=self.conversation_history, model=model, tools=self._tools
+                messages=self.conversation_history,
+                model=model,
+                tools=self._tools,
             )
             response = await client.completion(
                 request,
@@ -301,3 +328,6 @@ class AgentBase(BaseModel):
     def _add_tool(self, tool: GenericTool) -> None:
         self._tools.append(tool)
         self._tools_map[tool.name] = tool.func
+
+    def run_sync(self):
+        asyncio.run(self.run())

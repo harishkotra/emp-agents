@@ -37,6 +37,3 @@ pip install emp-agents eth-rpc-py eth-typeshed-py
 
 !!! tip
     eth-packages are libraries for RPC/Onchain interactions. They facilitate execution of onchain actions by providing typed interfaces, RPC connections, and contract abstractions that agents can use to interact with various blockchain networks.
----
-
-# Quickstart

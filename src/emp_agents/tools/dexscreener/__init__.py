@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from typing_extensions import Doc
 
@@ -24,8 +24,8 @@ class DexScreenerSkill(SkillSet):
     @staticmethod
     async def get_pair_by_chain(
         chain_id: Annotated[
-            str,
-            Doc("The chain ID (e.g., 'ethereum', 'arbitrum', 'base', 'solana', 'bsc')"),
+            Literal["ethereum", "solana", "arbitrum", "base", "bsc"],
+            Doc("The chain to search on"),
         ],
         pair_id: Annotated[str, Doc("The pair contract address")],
     ) -> str:
