@@ -14,7 +14,6 @@ from emp_agents.models.protocol import SkillSet, onchain_action, view_action
 
 from ..network import NetworkOptions, NetworkSkill
 
-
 wallet_provider = Provider()
 
 
