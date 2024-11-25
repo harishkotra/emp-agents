@@ -9,6 +9,8 @@ Tools allow Large Language Models (LLMs) to interact with external systems and p
 - Read and write files
 - And much more
 
+---
+
 ## How Tools Work
 
 When using tools with an LLM:
