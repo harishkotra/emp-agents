@@ -30,7 +30,7 @@ def load_network() -> type[Network] | None:
     This can be overridden by using the scope for your agent.
     Use `scope_load_network` to scope this method.
     """
-    return NetworkSkill.get_network()
+    return NetworkSkill.get_network_type()
 
 
 def scope_load_wallet(
@@ -136,7 +136,7 @@ class ERC20Skill(SkillSet):
         decimals = await token.decimals().get()
         token_amount = int(amount * 10**decimals)
         tx = await token.transfer(to_address, token_amount).execute(wallet)
-        return f"Transaction sent: {network.block_explorer.url}/tx/{tx.hash}"
+        return f"Transaction sent: {network.block_explorer.url}/tx/{tx}"
 
     @onchain_action
     @staticmethod
@@ -162,7 +162,7 @@ class ERC20Skill(SkillSet):
 
         token = ERC20[network](address=token_address)
         tx = await token.approve(spender, amount).execute(wallet)
-        return f"Transaction sent: {network.block_explorer.url}/tx/{tx.hash}"
+        return f"Transaction sent: {network.block_explorer.url}/tx/{tx}"
 
     @onchain_action
     @staticmethod
@@ -192,4 +192,4 @@ class ERC20Skill(SkillSet):
 
         token = ERC20[network](address=token_address)
         tx = await token.transfer_from(from_address, to_address, amount).execute(wallet)
-        return f"Transaction sent: {network.block_explorer.url}/tx/{tx.hash}"
+        return f"Transaction sent: {network.block_explorer.url}/tx/{tx}"

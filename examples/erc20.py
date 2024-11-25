@@ -20,7 +20,7 @@ class ERC20Agent(SkillsAgent):
     def _load_implicits(self):
         if private_key := os.environ.get("EMP_AGENT_PRIVATE_KEY"):
             SimpleWalletSkill.set_private_key(private_key)
-        if network := os.environ.get("EMP_AGENT_NETWORK"):
+        if network := os.environ.get("EMP_AGENT_NETWORK", "ArbitrumSepolia"):
             NetworkSkill.set_network(network)
 
 
