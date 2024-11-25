@@ -11,13 +11,13 @@ search:
     - [Summarize](getting-started/summarize.md)
     - [Skills](getting-started/skills.md)
     - [Config](getting-started/config.md)
-- Concepts
-    - [Context](concepts/context.md)
-    - [Tools](concepts/tools.md)
 - [Skills](skills/index.md)
     - [Twitter](skills/twitter.md)
     - [Basic Wallet](skills/basic_wallet.md)
     - [DexScreener](skills/dexscreener.md)
     - [Uniswap](skills/uniswap.md)
     - [Simulacrum](skills/simulacrum.md)
-- [Purpose](purpose/rationale.md)
+- Concepts
+    - [Purpose](concepts/rationale.md)
+    - [Context](concepts/context.md)
+    - [Tools](concepts/tools.md)

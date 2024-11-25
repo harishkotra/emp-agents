@@ -14,13 +14,3 @@ We also have an explicit focus on tooling for blockchain integrated agents.  Thi
 **Onchain Actions**: Agents should be able to make onchain actions, such as sending transactions to a blockchain.
 **Onchain Data**: Agents should be able to retrieve data from a blockchain.
 **Social Interactions**: Agents should be able to interact with social media platforms.
-
-
-I woul also include a few other capabilities that are more traditional data wrangling behaviors:
-
-**Extract Data**: Agents should be able to extract data from a website or other source.
-**Transform Data**: Agents should be able to transform data into a usable format.
-**Load Data**: Agents should be able to load data into a database or other storage.
-
-
-Since an agent will typically be working directly with text, because able to provide the information to the agent as a jsonnd or csv file allows the agent to work with the information directly.
