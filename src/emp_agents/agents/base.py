@@ -78,11 +78,21 @@ class AgentBase(BaseModel):
 
     async def summarize(
         self,
-        model: OpenAIModelType | AnthropicModelType = OpenAIModelType.gpt4o_mini,
+        model: OpenAIModelType | AnthropicModelType | None = None,
         update: bool = True,
+        prompt: str | None = None,
+        max_tokens: int = 500,
     ) -> str:
+        if model is None:
+            model = self._default_model
+        assert model is not None, "Model is required"
+
         summary = await summarize_conversation(
-            self._make_client(model), self.conversation_history, model=model
+            self._make_client(model),
+            self.conversation_history,
+            model=model,
+            prompt=prompt,
+            max_tokens=max_tokens,
         )
         if update:
             self.conversation_history = [summary]
@@ -201,6 +211,18 @@ class AgentBase(BaseModel):
                 )
                 self.conversation_history += [message]
         return None
+
+    def add_message(
+        self,
+        message: Message,
+    ) -> None:
+        self.conversation_history += [message]
+
+    def add_messages(
+        self,
+        messages: list[Message],
+    ) -> None:
+        self.conversation_history += messages
 
     async def complete(
         self,

@@ -6,8 +6,14 @@ search:
 - Tutorial
     - [Getting Started](getting-started/index.md)
     - [Using Tools](getting-started/tools.md)
+    - [Model](getting-started/model.md)
+    - [Conversation](getting-started/conversation.md)
+    - [Summarize](getting-started/summarize.md)
     - [Skills](getting-started/skills.md)
     - [Config](getting-started/config.md)
+- Concepts
+    - [Context](concepts/context.md)
+    - [Tools](concepts/tools.md)
 - [Skills](skills/index.md)
     - [Twitter](skills/twitter.md)
     - [Basic Wallet](skills/basic_wallet.md)

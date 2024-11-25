@@ -5,7 +5,12 @@ import tiktoken
 from emp_agents.types import AnthropicModelType, OpenAIModelType, Role
 
 if TYPE_CHECKING:
-    from emp_agents.models import AnthropicBase, Message, OpenAIBase, Request
+    from emp_agents.models import AnthropicBase, Message, OpenAIBase
+
+DEFAULT_SUMMARY_PROMPT = """
+You are an assistant that summarizes conversations concisely.
+Dont worry about human readability, just focus on conciseness.
+"""
 
 
 def format_conversation(conversation: list["Message"]) -> str:
@@ -41,14 +46,21 @@ def count_tokens(
 async def summarize_conversation(
     client: "OpenAIBase | AnthropicBase",
     messages: list["Message"],
-    model: OpenAIModelType | AnthropicModelType = OpenAIModelType.gpt4o_mini,
+    model: OpenAIModelType | AnthropicModelType,
+    prompt: str | None = None,
+    max_tokens: int = 500,
 ) -> "Message":
+    from emp_agents.models import Message, Request
+
+    summary_prompt = prompt or DEFAULT_SUMMARY_PROMPT
+    assert summary_prompt is not None, "Summary prompt is required"
+
     try:
         request = Request(
             messages=[
                 Message(
                     role=Role.system,
-                    content="You are an assistant that summarizes conversations concisely.  Dont worry about human readability, just focus on conciseness.",
+                    content=summary_prompt,
                 ),
                 Message(
                     role=Role.user,
@@ -56,7 +68,7 @@ async def summarize_conversation(
                 ),
             ],
             model=model,
-            max_tokens=500,
+            max_tokens=max_tokens,
             temperature=0.5,
         )
         response = await client.completion(
