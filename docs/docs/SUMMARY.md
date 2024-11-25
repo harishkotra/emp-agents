@@ -5,10 +5,10 @@ search:
 - [Overview](index.md)
 - Tutorial
     - [Getting Started](getting-started/index.md)
-    - [Using Tools](getting-started/tools.md)
     - [Model](getting-started/model.md)
     - [Conversation](getting-started/conversation.md)
     - [Summarize](getting-started/summarize.md)
+    - [Using Tools](getting-started/tools.md)
     - [Skills](getting-started/skills.md)
     - [Config](getting-started/config.md)
 - [Skills](skills/index.md)
