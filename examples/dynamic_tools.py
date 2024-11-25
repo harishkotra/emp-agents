@@ -3,7 +3,6 @@ import os
 
 from emp_agents.agents.persistentagent import PersistentAgent, PersistentAgentConfig
 from emp_agents.models.protocol.registry import ToolRegistry
-from emp_agents.tools import __all__
 from emp_agents.types import AnthropicModelType
 
 describe_protocol_tool = ToolRegistry.get_tool("ERC20Skill", "describe_protocol")
