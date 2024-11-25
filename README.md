@@ -2,6 +2,14 @@
 
 A library for building low-code, capable and extensible autonomous agent systems open sourced by [Empyreal](https://empyrealsdk.com/).
 
+---
+
+## Docs
+
+Read the docs [here](https://emp-agents.empyrealsdk.com/)
+
+---
+
 ## Quick Start
 
 ```shell
