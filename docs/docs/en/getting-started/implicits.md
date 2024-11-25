@@ -97,34 +97,34 @@ class FractionAgent(SkillsAgent):
         _denominator.set(2)
 
 
-agent = FractionAgent(
-    personality="be brief.",
-    skills=[
-        FractionSkill,
-    ],
-)
+# We create an async function, which will keep the context shared.
+# Each thread has its own context, so if you run these in separate threads, the context will not be shared
+# This is a good reason to use a different mechanism for persistence, like a database as a scoped override.
+# https://docs.python.org/3/library/contextvars.html#contextvars.Context
+async def main():
+    print(await agent.answer("Make a fraction"))
+    # Output: The fraction is \( \frac{21}{1} \).
 
-print(asyncio.run(agent.answer("Make a fraction")))
-# Output: The fraction is \( \frac{21}{1} \).
+    # update the denominator
+    print(await agent.answer("Update the denominator to 10"))
 
-# update the denominator
-print(asyncio.run(agent.answer("Update the denominator to 10")))
+    # make a fraction
+    print(await agent.answer("Make a fraction"))
+    # Output: The fraction created is \( \frac{1}{10} \) which is equivalent to 0.1. If you need a different numerator, let me know!
 
-# make a fraction
-print(asyncio.run(agent.answer("Make a fraction")))
-# Output: The fraction created is \( \frac{1}{10} \) which is equivalent to 0.1. If you need a different numerator, let me know!
+    # Lets create a new agent that overrides the numerator and denominator functions
+    agent2 = FractionAgent(
+        skills=[FractionSkill],
+        personality="be brief.",
+        scopes=[
+            scope_load_numerator(lambda: "1000"),
+            scope_load_denominator(lambda: 10),
+        ],
+    )
+
+    print(await agent2.answer("Make a fraction"))
+    # Output: The fraction is \( \frac{100}{1} \).
 
 
-# Lets create a new agent that overrides the numerator and denominator functions
-agent = FractionAgent(
-    skills=[FractionSkill],
-    personality="be brief.",
-    scopes=[
-        scope_load_numerator(lambda: "1000"),
-        scope_load_denominator(lambda: 10),
-    ],
-)
-
-print(asyncio.run(agent.answer("Make a fraction")))
-# Output: The fraction is \( \frac{100}{1} \).
-```
+if __name__ == "__main__":
+    asyncio.run(main())
