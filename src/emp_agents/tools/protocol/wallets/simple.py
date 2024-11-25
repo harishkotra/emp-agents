@@ -72,7 +72,7 @@ class SimpleWalletSkill(SkillSet):
         key = _private_key.get()
         if key is None:
             return "No private key set"
-        wallet = PrivateKeyWallet(private_key=key)
+        wallet = PrivateKeyWallet(private_key=HexStr(key))
         return wallet.address
 
     @tool_method
@@ -93,7 +93,7 @@ class SimpleWalletSkill(SkillSet):
             return "No network set, try setting the network first"
 
         network_type: type[Network] = get_network_by_name(network)
-        balance = await Account[network_type].get_balance(address)
+        balance = await Account[network_type].get_balance(address)  # type: ignore[valid-type]
         return f"Balance: {balance}"
 
     @onchain_action
@@ -122,7 +122,7 @@ class SimpleWalletSkill(SkillSet):
             return "No wallet set, try creating a wallet first"
 
         network_type: type[Network] = get_network_by_name(network)
-        balance = await Account[network_type].get_balance(wallet.address)
+        balance = await Account[network_type].get_balance(wallet.address)  # type: ignore[valid-type]
         if message:
             data = "0x" + message.encode("utf-8").hex()
         else:

@@ -1,4 +1,5 @@
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 
 class ImplicitManager:
@@ -22,7 +23,7 @@ class ImplicitManager:
 
         def _get_implicit(*args, **kwargs) -> Any:
             imp = cls.get_implicit(name)
-            if isinstance(imp, Callable):
+            if callable(imp):
                 return imp(*args, **kwargs)
             return imp
 
