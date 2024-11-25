@@ -1,11 +1,10 @@
 from contextvars import ContextVar
 from typing import Annotated, Literal, Optional, cast
-from typing_extensions import Doc
 
 from eth_rpc.networks import Network, get_network_by_name
+from typing_extensions import Doc
 
 from emp_agents.models.protocol import SkillSet, tool_method
-
 
 _network: ContextVar[Optional[type[Network]]] = ContextVar("_network", default=None)
 

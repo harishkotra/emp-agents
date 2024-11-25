@@ -1,14 +1,15 @@
 from contextvars import ContextVar
-from typing import Optional, Annotated
-from typing_extensions import Doc
+from typing import Annotated, Optional
 
-from eth_typing import HexStr, HexAddress
 from eth_rpc import Account, PrivateKeyWallet
 from eth_rpc.networks import Network, get_network_by_name
+from eth_typing import HexAddress, HexStr
+from typing_extensions import Doc
 
 from emp_agents.implicits import Depends, inject
-from emp_agents.models.protocol import SkillSet, tool_method, onchain_action
-from ..network import NetworkSkill, NetworkOptions
+from emp_agents.models.protocol import SkillSet, onchain_action, tool_method
+
+from ..network import NetworkOptions, NetworkSkill
 
 # Context variable to store private key
 _private_key: ContextVar[Optional[str]] = ContextVar("_private_key", default=None)

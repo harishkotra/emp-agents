@@ -1,6 +1,6 @@
 from .erc20 import ERC20Skill
-from .network import NetworkSkill
 from .gmx import GmxSkill
+from .network import NetworkSkill
 from .wallets.simple import SimpleWalletSkill
 
 __all__ = [

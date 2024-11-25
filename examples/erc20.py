@@ -7,8 +7,8 @@ from emp_agents.agents.skills import SkillsAgent
 from emp_agents.implicits import set_implicit
 from emp_agents.logger import make_verbose
 from emp_agents.tools.protocol.erc20 import ERC20Skill
-from emp_agents.tools.protocol.wallets import SimpleWalletSkill
 from emp_agents.tools.protocol.network import NetworkSkill
+from emp_agents.tools.protocol.wallets import SimpleWalletSkill
 from emp_agents.types import OpenAIModelType
 
 set_implicit("load_wallet", SimpleWalletSkill.get_wallet)

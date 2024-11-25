@@ -13,6 +13,7 @@ from eth_typing import HexAddress, HexStr
 from typing_extensions import Doc
 
 from emp_agents.implicits import IgnoreDepends, lazy_implicit
+
 from .constants import ROUTER_ADDRESSES
 
 

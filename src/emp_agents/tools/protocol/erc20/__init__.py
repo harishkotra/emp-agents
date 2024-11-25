@@ -9,7 +9,8 @@ from typing_extensions import Doc
 
 from emp_agents.implicits import Depends, IgnoreDepends, inject, lazy_implicit
 from emp_agents.models.protocol import SkillSet, onchain_action, view_action
-from ..network import NetworkSkill, NetworkOptions
+
+from ..network import NetworkOptions, NetworkSkill
 
 
 class ERC20Skill(SkillSet):
