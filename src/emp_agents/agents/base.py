@@ -233,7 +233,6 @@ class AgentBase(BaseModel):
     async def complete(
         self,
         model: OpenAIModelType | AnthropicModelType | None = None,
-        verbose: bool = False,
     ) -> str:
         if not model:
             model = self._default_model
