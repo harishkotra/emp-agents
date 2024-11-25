@@ -16,6 +16,7 @@ from fast_depends.dependencies.model import Depends
 from pydantic import BaseModel
 
 from emp_agents.implicits.models import IgnoreDepends
+
 from .types import Doc, FunctionSchema
 from .utils import unwrap_doc
 

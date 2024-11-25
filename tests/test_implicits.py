@@ -1,6 +1,6 @@
 from fast_depends import Depends
 
-from emp_agents.implicits import ImplicitManager, IgnoreDepends, inject
+from emp_agents.implicits import IgnoreDepends, ImplicitManager, inject
 from emp_agents.utils import get_function_schema
 
 

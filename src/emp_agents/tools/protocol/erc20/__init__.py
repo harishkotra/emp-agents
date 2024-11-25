@@ -8,8 +8,8 @@ from eth_typeshed.multicall import multicall
 from typing_extensions import Doc
 
 from emp_agents.implicits import IgnoreDepends
-from emp_agents.models.protocol import SkillSet, onchain_action, view_action
 from emp_agents.implicits.manager import ImplicitManager
+from emp_agents.models.protocol import SkillSet, onchain_action, view_action
 
 
 class ERC20Skill(SkillSet):

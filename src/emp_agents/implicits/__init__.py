@@ -2,8 +2,8 @@ from typing import Any, Callable, ParamSpec, TypeVar
 
 from fast_depends import inject
 
-from .models import IgnoreDepends as IgnoreDependsModel
 from .manager import ImplicitManager
+from .models import IgnoreDepends as IgnoreDependsModel
 
 P = ParamSpec("P")
 T = TypeVar("T")
