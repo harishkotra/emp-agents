@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from typing import Annotated, Literal
 
+from eth_rpc import PrivateKeyWallet
 from eth_rpc.networks import get_network_by_name
 from eth_typeshed.erc20 import ERC20
 from eth_typeshed.uniswap_v2.router.contract import (
@@ -11,12 +12,9 @@ from eth_typeshed.uniswap_v2.router.contract import (
 from eth_typing import HexAddress, HexStr
 from typing_extensions import Doc
 
+from emp_agents.implicits import IgnoreDepends, lazy_implicit
+
 from .constants import ROUTER_ADDRESSES
-
-
-def _load_wallet():
-    """We will be implementing this soon, to enable a customizable way to manage wallets per application."""
-    raise NotImplementedError("Load Wallet not yet implemented")
 
 
 async def swap_exact_tokens_for_tokens(
@@ -30,9 +28,8 @@ async def swap_exact_tokens_for_tokens(
     recipient: Annotated[HexAddress, Doc("The recipient of the swapped tokens")],
     slippage: Annotated[float, Doc("The slippage tolerance")],
     deadline: Annotated[int | None, Doc("The deadline for the swap")],
+    wallet: Annotated[PrivateKeyWallet, Doc("The wallet to use for the swap")],
 ) -> HexStr:
-    wallet = _load_wallet()
-
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
     assert deadline
@@ -68,8 +65,8 @@ async def swap_exact_eth_for_tokens(
     recipient: HexAddress,
     slippage: float = 0.05,
     deadline: int | None = None,
+    wallet: Annotated[PrivateKeyWallet, Doc("The wallet to use for the swap")],
 ) -> HexStr:
-    wallet = _load_wallet()
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
     assert deadline
@@ -107,9 +104,8 @@ async def swap_exact_tokens_for_eth(
     recipient: Annotated[HexAddress, Doc("The recipient of the swapped tokens")],
     slippage: Annotated[float, Doc("The slippage tolerance")],
     deadline: Annotated[int | None, Doc("The deadline for the swap")],
+    wallet: Annotated[PrivateKeyWallet, Doc("The wallet to use for the swap")],
 ) -> HexStr:
-    wallet = _load_wallet()
-
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
     assert deadline

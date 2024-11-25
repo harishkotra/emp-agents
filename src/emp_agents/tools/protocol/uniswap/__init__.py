@@ -1,9 +1,11 @@
 import json
 from typing import Annotated, Literal
 
-from eth_typing import HexAddress, HexStr
+from eth_rpc import PrivateKeyWallet
+from eth_typing import HexAddress
 from typing_extensions import Doc
 
+from emp_agents.implicits import IgnoreDepends, lazy_implicit
 from emp_agents.models.protocol import SkillSet, onchain_action, view_action
 
 from .price import get_price
@@ -51,11 +53,16 @@ class UniswapSkill(SkillSet):
         recipient: Annotated[HexAddress, Doc("The recipient of the swapped tokens")],
         slippage: Annotated[float, Doc("The slippage tolerance")] = 0.01,
         deadline: Annotated[int | None, Doc("The deadline for the swap")] = None,
-    ) -> HexStr:
-        """Swap an exact amount of tokens for ETH.  Returns the transaction hash."""
+        wallet: Annotated[
+            PrivateKeyWallet, Doc("The wallet to use for the swap")
+        ] = IgnoreDepends(lazy_implicit("load_wallet")),
+    ) -> str:
+        if not isinstance(wallet, PrivateKeyWallet):
+            return "WalletNotFoundError: make sure you have setup your wallet loading logic"
+        """Swap an exact amount of tokens for ETH.  Returns the transaction hash or error message."""
         if input_token is None:
             if output_token is None:
-                return "Invalid swap: both input and output tokens cannot be None"
+                return "InvalidSwapError: both input and output tokens cannot be None"
             assert output_token is not None
             return await swap_exact_eth_for_tokens(
                 network,
@@ -64,6 +71,7 @@ class UniswapSkill(SkillSet):
                 recipient,
                 slippage,
                 deadline,
+                wallet,
             )
         elif output_token is None:
             return await swap_exact_tokens_for_eth(
@@ -73,6 +81,7 @@ class UniswapSkill(SkillSet):
                 recipient,
                 slippage,
                 deadline,
+                wallet,
             )
         return await swap_exact_tokens_for_tokens(
             network,
@@ -82,4 +91,5 @@ class UniswapSkill(SkillSet):
             recipient,
             slippage,
             deadline,
+            wallet,
         )

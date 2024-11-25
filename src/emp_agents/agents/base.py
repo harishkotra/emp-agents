@@ -6,6 +6,7 @@ from typing import Any, Callable
 from pydantic import BaseModel, Field, PrivateAttr, computed_field, field_validator
 
 from emp_agents.exceptions import InvalidModelException
+from emp_agents.logger import logger
 from emp_agents.models import AnthropicBase, GenericTool, Message, OpenAIBase, Request
 from emp_agents.types import AnthropicModelType, OpenAIModelType, Role
 from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
@@ -30,7 +31,7 @@ class AgentBase(BaseModel):
     _tools: list[GenericTool] = PrivateAttr(default_factory=list)
     _tools_map: dict[str, Callable[..., Any]] = PrivateAttr(default_factory=dict)
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def _default_model(self) -> OpenAIModelType | AnthropicModelType:
         if self.default_model:
@@ -56,6 +57,9 @@ class AgentBase(BaseModel):
             for tool in v
         ]
 
+    def _load_implicits(self):
+        """Override this method to load implicits to the agent directly"""
+
     def model_post_init(self, _context: Any):
         if not (self.openai_api_key or self.anthropic_api_key):
             raise ValueError("Must provide either openai or anthropic api key")
@@ -70,6 +74,8 @@ class AgentBase(BaseModel):
         self.conversation_history = [
             Message(role=Role.system, content=self.system_prompt)
         ] + self.conversation_history
+
+        self._load_implicits()
 
     def get_token_count(
         self, model: OpenAIModelType | AnthropicModelType = OpenAIModelType.gpt4o_mini
@@ -227,7 +233,6 @@ class AgentBase(BaseModel):
     async def complete(
         self,
         model: OpenAIModelType | AnthropicModelType | None = None,
-        verbose: bool = False,
     ) -> str:
         if not model:
             model = self._default_model
@@ -271,8 +276,7 @@ class AgentBase(BaseModel):
                             tool_call.id if isinstance(model, OpenAIModelType) else None
                         ),
                     )
-                    if verbose:
-                        print(message)
+                    logger.info(message)
                     self.conversation_history += [message]
                 continue
             else:
@@ -344,8 +348,8 @@ class AgentBase(BaseModel):
                 break
             conversation += [Message(role=Role.user, content=question)]
             response = await self.answer(question)
-            conversation += [Message(role=Role.assistant, content=response)]
             print(response)
+            conversation += [Message(role=Role.assistant, content=response)]
 
     def _add_tool(self, tool: GenericTool) -> None:
         self._tools.append(tool)

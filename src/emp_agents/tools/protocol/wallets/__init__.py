@@ -1,3 +1,5 @@
-from emp_agents.tools.protocol.wallets.simple import SimpleWalletSkill
+from .simple import SimpleWalletSkill
 
-__all__ = ["SimpleWalletSkill"]
+__all__ = [
+    "SimpleWalletSkill",
+]
