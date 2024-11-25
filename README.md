@@ -2,22 +2,6 @@
 
 A library for building low-code, capable and extensible autonomous agent systems open sourced by [Empyreal](https://empyrealsdk.com/).
 
-<p align="center">
-  <a href="https://github.com/empyrealapp/emp-agents/actions/workflows/build.yaml" target="_blank">
-    <img src="https://github.com/empyrealapp/emp-agents/actions/workflows/build.yaml/badge.svg?branch=main" alt="Test Passing"/>
-  </a>
-  <a href="https://www.pepy.tech/projects/emp-agents" target="_blank">
-    <img src="https://static.pepy.tech/personalized-badge/emp-agents?period=month&units=international_system&left_color=grey&right_color=green&left_text=downloads/month" alt="Downloads"/>
-  </a>
-  <a href="https://pypi.org/project/emp-agents" target="_blank">
-    <img src="https://img.shields.io/pypi/v/emp-agents?label=PyPI" alt="Package version">
-  </a>
-  <a href="https://pypi.org/project/emp-agents" target="_blank">
-    <img src="https://img.shields.io/pypi/pyversions/eth-rpc-py.svg" alt="Supported Python versions">
-  </a>
-</p>
-
-
 ## Quick Start
 
 ```shell
