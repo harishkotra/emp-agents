@@ -12,6 +12,7 @@ from typing import (
     get_origin,
 )
 
+from fast_depends.dependencies.model import Depends
 from pydantic import BaseModel
 
 from .types import Doc, FunctionSchema
@@ -133,6 +134,9 @@ def get_function_schema(  # noqa: C901
         if param.default is not inspect._empty:
             default_value = param.default
 
+        if isinstance(default_value, Depends):
+            continue
+
         schema["properties"][name] = {
             "type": guess_type(T),
             "description": description,
@@ -191,7 +195,6 @@ def guess_type(  # noqa: C901
     Doc("str | list of str that representing JSON schema type"),
 ]:
     """Guesses the JSON schema type for the given python type."""
-
     if isclass(T) and issubclass(T, BaseModel):
         return "object"
 

@@ -5,9 +5,11 @@ from eth_rpc import PrivateKeyWallet
 from eth_rpc.networks import get_network_by_name
 from eth_typeshed import ERC20
 from eth_typeshed.multicall import multicall
+from fast_depends import Depends
 from typing_extensions import Doc
 
 from emp_agents.models.protocol import SkillSet, onchain_action, view_action
+from emp_agents.implicits.implicit_manager import ImplicitManager
 
 
 class ERC20Skill(SkillSet):
@@ -85,11 +87,11 @@ class ERC20Skill(SkillSet):
             Doc("The network to use.  One of ethereum, arbitrum, or base."),
         ],
         token_address: Annotated[str, Doc("The address of the ERC20 token.")],
-        private_key: Annotated[
-            str, Doc("The private key of the account to transfer from.")
-        ],
         to_address: Annotated[str, Doc("The address of the account to transfer to.")],
         amount: Annotated[float, Doc("The amount to transfer.")],
+        wallet: Annotated[
+            PrivateKeyWallet, Doc("The wallet to use to transfer the token.")
+        ] = Depends(ImplicitManager.lazy_implicit("load_wallet")),
     ) -> str:
         try:
             network_type = get_network_by_name(network)
@@ -97,7 +99,6 @@ class ERC20Skill(SkillSet):
             return "Invalid network"
 
         token = ERC20[network_type](address=token_address)
-        wallet = PrivateKeyWallet(private_key=private_key)
         tx = await token.transfer(to_address, amount).execute(wallet)
         return f"Transaction sent: {tx.hash}"
 
