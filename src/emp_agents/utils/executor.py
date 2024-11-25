@@ -1,8 +1,9 @@
-import logging
 from asyncio import iscoroutine
 from typing import Any
 
 from pydantic.types import Json
+
+from emp_agents.logger import logger
 
 
 async def execute_tool(
@@ -10,7 +11,7 @@ async def execute_tool(
     function_name: str,
     arguments: Json[Any],
 ):
-    logging.debug(f"EXECUTING TOOL {function_name} with arguments {arguments}")
+    logger.info(f"EXECUTING TOOL {function_name} with arguments {arguments}")
 
     func = tools_map[function_name]
     response = func(**arguments)

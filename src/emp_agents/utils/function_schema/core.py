@@ -164,6 +164,7 @@ def get_function_schema(  # noqa: C901
         if enum_ is not None:
             schema["properties"][name]["enum"] = [t for t in enum_ if t is not None]
 
+        # TODO: check if default value is set via the depends call
         if default_value is not inspect._empty and not isinstance(
             default_value,
             Depends,

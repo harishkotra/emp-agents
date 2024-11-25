@@ -17,7 +17,7 @@ class ImplicitManager:
         cls.implicits[name] = implicit
 
     @classmethod
-    def lazy_implicit(cls, name: str) -> Callable[..., Any]:
+    def lazy_implicit(cls, name: str) -> Callable[..., Any] | Any:
         """Create a lazy implicit that can be resolved later"""
 
         def _get_implicit(*args, **kwargs) -> Any:

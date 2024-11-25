@@ -29,7 +29,7 @@ By creating consistent abstractions across different AI providers like OpenAI an
 
 # Install
 
-All the libraries in eth-packages works on Linux, macOS, Windows and most Unix-style operating systems. You can install it with pip as usual:
+All the libraries in emp-agents works on Linux, macOS, Windows and most Unix-style operating systems. You can install it with pip as usual:
 
 ```sh
 pip install emp-agents

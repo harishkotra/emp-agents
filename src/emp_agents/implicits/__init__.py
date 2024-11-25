@@ -1,6 +1,6 @@
 from typing import Any, Callable, ParamSpec, TypeVar
 
-from fast_depends import inject
+from fast_depends import Depends, inject
 
 from .manager import ImplicitManager
 from .models import IgnoreDepends as IgnoreDependsModel
@@ -22,8 +22,18 @@ def IgnoreDepends(
     )
 
 
+def set_implicit(name: str, implicit: Any):
+    ImplicitManager.add_implicit(name, implicit)
+
+
+def lazy_implicit(name: str) -> Callable[P, T] | T:
+    return ImplicitManager.lazy_implicit(name)
+
+
 __all__ = [
+    "Depends",
     "ImplicitManager",
     "IgnoreDepends",
     "inject",
+    "set_implicit",
 ]
