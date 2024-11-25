@@ -15,6 +15,7 @@ from typing import (
 from fast_depends.dependencies.model import Depends
 from pydantic import BaseModel
 
+from emp_agents.implicits.models import IgnoreDepends
 from .types import Doc, FunctionSchema
 from .utils import unwrap_doc
 
@@ -134,7 +135,9 @@ def get_function_schema(  # noqa: C901
         if param.default is not inspect._empty:
             default_value = param.default
 
-        if isinstance(default_value, Depends):
+        if default_value is not inspect._empty and isinstance(
+            default_value, IgnoreDepends
+        ):
             continue
 
         schema["properties"][name] = {
@@ -160,7 +163,10 @@ def get_function_schema(  # noqa: C901
         if enum_ is not None:
             schema["properties"][name]["enum"] = [t for t in enum_ if t is not None]
 
-        if default_value is not inspect._empty:
+        if default_value is not inspect._empty and not isinstance(
+            default_value,
+            Depends,
+        ):
             schema["properties"][name]["default"] = default_value
 
         try:

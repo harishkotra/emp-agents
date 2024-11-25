@@ -5,11 +5,11 @@ from eth_rpc import PrivateKeyWallet
 from eth_rpc.networks import get_network_by_name
 from eth_typeshed import ERC20
 from eth_typeshed.multicall import multicall
-from fast_depends import Depends
 from typing_extensions import Doc
 
+from emp_agents.implicits import IgnoreDepends
 from emp_agents.models.protocol import SkillSet, onchain_action, view_action
-from emp_agents.implicits.implicit_manager import ImplicitManager
+from emp_agents.implicits.manager import ImplicitManager
 
 
 class ERC20Skill(SkillSet):
@@ -91,7 +91,7 @@ class ERC20Skill(SkillSet):
         amount: Annotated[float, Doc("The amount to transfer.")],
         wallet: Annotated[
             PrivateKeyWallet, Doc("The wallet to use to transfer the token.")
-        ] = Depends(ImplicitManager.lazy_implicit("load_wallet")),
+        ] = IgnoreDepends(ImplicitManager.lazy_implicit("load_wallet")),
     ) -> str:
         try:
             network_type = get_network_by_name(network)
