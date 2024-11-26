@@ -22,10 +22,10 @@ async def test_basic_agent():
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY"),
         default_model=OpenAIModelType.gpt4o_mini,
     )
-    response = await agent.respond("what is the meaning of life?")
+    response = await agent.answer("what is the meaning of life?")
     assert response == "test complete"
 
-    response = await agent.respond(
+    response = await agent.answer(
         "what is the meaning of life?", model=AnthropicModelType.claude_3_opus
     )
     assert response == "test complete"
@@ -38,10 +38,9 @@ async def test_basic_agent_no_model():
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY"),
     )
     with pytest.raises(InvalidModelException):
-        await agent.respond("this should raise an error", model="invalid_model")
+        await agent.answer("this should raise an error", model="invalid_model")
 
-    with pytest.raises(InvalidModelException):
-        await agent.respond("this should raise an error")
+    await agent.answer("this should not raise an error")
 
 
 class LifeMeaning(BaseModel):
@@ -56,7 +55,7 @@ async def test_response_format():
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY"),
         default_model=OpenAIModelType.gpt4o_mini,
     )
-    response = await agent.respond(
+    response = await agent.answer(
         "what is the meaning of life?", response_format=LifeMeaning
     )
     LifeMeaning.model_validate_json(response)

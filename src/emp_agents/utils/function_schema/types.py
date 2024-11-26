@@ -32,6 +32,8 @@ class ParamSchema(TypedDict):
 
     type: str
     description: str
+    properties: NotRequired[dict[str, "ParamSchema"]]
+    required: NotRequired[list[str]]
     enum: NotRequired[list[str]]
     default: NotRequired[str]
 

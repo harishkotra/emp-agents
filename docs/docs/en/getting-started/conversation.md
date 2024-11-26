@@ -35,7 +35,7 @@ agent.add_message(message)
 message = Message(role=Role.user, content="Why did you say that?")
 agent.add_message(message)
 
-response = await agent.complete()
+response = await agent.run_conversation()
 print(agent.conversation_history)
 ```
 

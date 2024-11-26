@@ -32,7 +32,7 @@ math_scope = Provider()
 
 # This is the default loader for numerator, which uses the context variable.
 # It uses a string because it can also be provided by the agent
-def load_numerator() -> str:
+def load_numerator() -> str | None:
     """
     This can be overridden by using the scope for your agent.
     Use `scope_load_numerator` to scope this method.
@@ -42,7 +42,7 @@ def load_numerator() -> str:
 
 # This is the default loader for denominator, which uses the context variable and provides an integer
 # this can not be provided by the agent
-def load_denominator() -> int:
+def load_denominator() -> int | None:
     """
     This can be overridden by using the scope for your agent.
     Use `scope_load_denominator` to scope this method.
@@ -100,20 +100,27 @@ class FractionAgent(SkillsAgent):
 # a different mechanism for persistence like a database as a scoped override.
 # See: https://docs.python.org/3/library/contextvars.html#contextvars.Context
 async def main():
+    agent = FractionAgent(
+        personality="be brief, give response as a fraction",
+        skills=[
+            FractionSkill,
+        ],
+    )
+
     print(await agent.answer("Make a fraction"))
     # Output: The fraction is \( \frac{21}{1} \).
 
     # Update the denominator
-    print(await agent.answer("Update the denominator to 10"))
+    await agent.answer("Update the denominator to 10")
 
     # Make a fraction
     print(await agent.answer("Make a fraction"))
-    # Output: The fraction created is \( \frac{1}{10} \) which is equivalent to 0.1
+    # Output: he fraction is \( \frac{4.2}{1} \) with a denominator of 10.
 
     # Lets create a new agent that overrides the numerator and denominator functions
     agent2 = FractionAgent(
         skills=[FractionSkill],
-        personality="be brief.",
+        personality="be brief, give response as a fraction",
         scopes=[
             scope_load_numerator(lambda: "1000"),
             scope_load_denominator(lambda: 10),
