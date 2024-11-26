@@ -50,7 +50,7 @@ class Message(BaseModel):
             tool_call_id=tool_call_id,
         )
 
-    def serialize_anthropic(self):
+    def serialize_anthropic(self) -> dict[str, Any]:
         data: dict[str, Any] = {"role": self.role}
         data["content"] = [{"type": "text", "text": self.content}]
         return data

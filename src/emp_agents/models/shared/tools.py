@@ -78,7 +78,7 @@ class GenericTool(BaseModel):
                 type="string",
                 description="the question you want answered by the agent",
                 enum=None,
-            )
+            ),
         }
         return GenericTool(
             description=description,

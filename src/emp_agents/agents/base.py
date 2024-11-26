@@ -42,6 +42,14 @@ class AgentBase(BaseModel):
             return AnthropicModelType.claude_3_opus
         raise ValueError("No API key found")
 
+    def _load_model(self, model: OpenAIModelType | AnthropicModelType | None):
+        if model is None:
+            model = self._default_model
+        assert model is not None, "Model is required"
+        if not isinstance(model, (OpenAIModelType, AnthropicModelType)):
+            raise InvalidModelException(model)
+        return model
+
     @field_validator("prompt", mode="before")
     @classmethod
     def to_prompt(cls, v: str) -> str:
@@ -89,9 +97,7 @@ class AgentBase(BaseModel):
         prompt: str | None = None,
         max_tokens: int = 500,
     ) -> str:
-        if model is None:
-            model = self._default_model
-        assert model is not None, "Model is required"
+        model = self._load_model(model)
 
         summary = await summarize_conversation(
             self._make_client(model),
@@ -112,18 +118,46 @@ class AgentBase(BaseModel):
         max_tokens: int | None = None,
         response_format: type[BaseModel] | None = None,
     ) -> str:
-        if self.default_model is None and model is None:
-            raise InvalidModelException("Model is required")
+        """Send a one-off question and get a response"""
         if model is None:
-            assert self.default_model is not None, "Model is required"
-            model = self.default_model
-        if not isinstance(model, (OpenAIModelType, AnthropicModelType)):
-            raise InvalidModelException(f"Invalid model: {model}")
-        client: OpenAIBase | AnthropicBase = self._make_client(model)
+            model = self._default_model
+
         conversation = [
             Message(role=Role.system, content=self.system_prompt),
             Message(role=Role.user, content=question),
         ]
+        return await self._run_conversation(
+            conversation,
+            model=model,
+            max_tokens=max_tokens,
+            response_format=response_format,
+        )
+
+    async def complete(
+        self,
+        model: OpenAIModelType | AnthropicModelType | None = None,
+        max_tokens: int | None = None,
+        response_format: type[BaseModel] | None = None,
+    ) -> str:
+        """Complete the current conversation until no more tool calls"""
+        model = self._load_model(model)
+        return await self._run_conversation(
+            self.conversation_history,
+            model=model,
+            max_tokens=max_tokens,
+            response_format=response_format,
+        )
+
+    async def _run_conversation(
+        self,
+        messages: list[Message],
+        model: OpenAIModelType | AnthropicModelType,
+        max_tokens: int | None = None,
+        response_format: type[BaseModel] | None = None,
+    ) -> str:
+        """Core conversation loop handling tool calls"""
+        client = self._make_client(model)
+        conversation = messages.copy()
 
         while True:
             request = Request(
@@ -133,72 +167,17 @@ class AgentBase(BaseModel):
                 max_tokens=max_tokens or 1_000,
                 response_format=response_format,
             )
-            response = await client.completion(
-                request,
-            )
+            response = await client.completion(request)
 
             if isinstance(model, OpenAIModelType):
                 conversation += response.messages
             else:
                 conversation += [Message(role=Role.assistant, content=response.text)]
 
-            tool_calls = response.tool_calls
-
-            if tool_calls:
-                for tool_call in tool_calls:
-                    result = await execute_tool(
-                        self._tools_map,
-                        tool_call.function.name,
-                        tool_call.function.arguments,
-                    )
-                    message = Message(
-                        role=(
-                            Role.user
-                            if isinstance(model, AnthropicModelType)
-                            else Role.tool
-                        ),
-                        content=result,
-                        tool_call_id=(
-                            tool_call.id if isinstance(model, OpenAIModelType) else None
-                        ),
-                    )
-                    conversation += [message]
-                continue
-            else:
+            if not response.tool_calls:
                 return response.text
 
-    async def answer(
-        self,
-        question: str,
-        model: OpenAIModelType | AnthropicModelType | None = None,
-    ) -> str:
-        self.conversation_history += [Message(role=Role.user, content=question)]
-        response = await self.complete(
-            model=model,
-        )
-        return response
-
-    async def step(
-        self,
-        model: OpenAIModelType | AnthropicModelType = OpenAIModelType.gpt4o_mini,
-    ) -> None:
-        client: OpenAIBase | AnthropicBase = self._make_client(model)
-        request = Request(
-            messages=self.conversation_history, model=model, tools=self._tools
-        )
-        response = await client.completion(
-            request,
-        )
-        if isinstance(model, OpenAIModelType):
-            self.conversation_history += response.messages
-        else:
-            self.conversation_history += [
-                Message(role=Role.assistant, content=response.text)
-            ]
-
-        tool_calls = response.tool_calls
-        if tool_calls:
-            for tool_call in tool_calls:
+            for tool_call in response.tool_calls:
                 result = await execute_tool(
                     self._tools_map,
                     tool_call.function.name,
@@ -215,8 +194,21 @@ class AgentBase(BaseModel):
                         tool_call.id if isinstance(model, OpenAIModelType) else None
                     ),
                 )
-                self.conversation_history += [message]
-        return None
+                if hasattr(self, "conversation_history"):
+                    logger.info(message)
+                conversation += [message]
+
+    async def answer(
+        self,
+        question: str,
+        model: OpenAIModelType | AnthropicModelType | None = None,
+        response_format: type[BaseModel] | None = None,
+    ) -> str:
+        self.conversation_history += [Message(role=Role.user, content=question)]
+        return await self.complete(
+            model=model,
+            response_format=response_format,
+        )
 
     def add_message(
         self,
@@ -230,82 +222,10 @@ class AgentBase(BaseModel):
     ) -> None:
         self.conversation_history += messages
 
-    async def complete(
-        self,
-        model: OpenAIModelType | AnthropicModelType | None = None,
-    ) -> str:
-        if not model:
-            model = self._default_model
-        assert model is not None, "Model is required"
-        client: OpenAIBase | AnthropicBase = self._make_client(model)
-
-        while True:
-            request = Request(
-                messages=self.conversation_history,
-                model=model,
-                tools=self._tools,
-            )
-            response = await client.completion(
-                request,
-            )
-
-            if isinstance(model, OpenAIModelType):
-                self.conversation_history += response.messages
-            else:
-                self.conversation_history += [
-                    Message(role=Role.assistant, content=response.text)
-                ]
-
-            tool_calls = response.tool_calls
-
-            if tool_calls:
-                for tool_call in tool_calls:
-                    result = await execute_tool(
-                        self._tools_map,
-                        tool_call.function.name,
-                        tool_call.function.arguments,
-                    )
-                    message = Message(
-                        role=(
-                            Role.user
-                            if isinstance(model, AnthropicModelType)
-                            else Role.tool
-                        ),
-                        content=result,
-                        tool_call_id=(
-                            tool_call.id if isinstance(model, OpenAIModelType) else None
-                        ),
-                    )
-                    logger.info(message)
-                    self.conversation_history += [message]
-                continue
-            else:
-                return response.text
-
-    def __repr__(self):
-        prompt = self.prompt[:100].strip().replace("\n", " ")
-        if len(prompt) >= 50:
-            prompt = prompt[:50] + "..."
-        return dedent(
-            """
-            <{class_name}
-                prompt="{prompt}..."
-                tools=[
-                    {tools}
-                ]
-            >
-        """.format(
-                class_name=self.__class__.__name__,
-                prompt=prompt,
-                tools="\n".join([repr(tool) for tool in self.tools]),
-            )
-        ).strip()
-
-    __str__ = __repr__
-
     def _make_client(
-        self, model: OpenAIModelType | AnthropicModelType
+        self, model: OpenAIModelType | AnthropicModelType | None = None
     ) -> OpenAIBase | AnthropicBase:
+        model = self._load_model(model)
         if isinstance(model, OpenAIModelType):
             if not self.openai_api_key:
                 raise ValueError("OpenAI API key is required")
@@ -357,3 +277,24 @@ class AgentBase(BaseModel):
 
     def run_sync(self):
         asyncio.run(self.run())
+
+    def __repr__(self):
+        prompt = self.prompt[:100].strip().replace("\n", " ")
+        if len(prompt) >= 50:
+            prompt = prompt[:50] + "..."
+        return dedent(
+            """
+            <{class_name}
+                prompt="{prompt}..."
+                tools=[
+                    {tools}
+                ]
+            >
+        """.format(
+                class_name=self.__class__.__name__,
+                prompt=prompt,
+                tools="\n".join([repr(tool) for tool in self.tools]),
+            )
+        ).strip()
+
+    __str__ = __repr__

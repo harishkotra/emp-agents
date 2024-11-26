@@ -3,6 +3,7 @@ from typing import Any, Callable
 from fast_depends import Provider
 from pydantic import BaseModel, ConfigDict, Field
 
+from emp_agents.models import Message
 from emp_agents.models.protocol import SkillSet
 from emp_agents.types import AnthropicModelType, OpenAIModelType
 
@@ -22,14 +23,19 @@ class SkillsAgent(AgentBase):
             for tool in skill._tools:
                 self._add_tool(tool)
 
-    async def complete(
+    async def _run_conversation(
         self,
-        model: OpenAIModelType | AnthropicModelType | None = None,
+        messages: list[Message],
+        model: OpenAIModelType | AnthropicModelType,
+        max_tokens: int | None = None,
+        response_format: type[BaseModel] | None = None,
     ) -> str:
         for scope, old, new in self.scopes:
             scope.dependency_overrides[old] = new
 
-        response = await super().complete(model)
+        response = await super()._run_conversation(
+            messages, model, max_tokens, response_format
+        )
 
         for scope, old, new in self.scopes:
             scope.dependency_overrides.pop(old, None)

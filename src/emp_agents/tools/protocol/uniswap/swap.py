@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
-from typing import Annotated, Literal
+from typing import Annotated
 
 from eth_rpc import PrivateKeyWallet
-from eth_rpc.networks import get_network_by_name
+from eth_rpc.networks import Network, get_network_by_name
 from eth_typeshed.erc20 import ERC20
 from eth_typeshed.uniswap_v2.router.contract import (
     EthSwapRequest,
@@ -12,23 +12,18 @@ from eth_typeshed.uniswap_v2.router.contract import (
 from eth_typing import HexAddress, HexStr
 from typing_extensions import Doc
 
-from emp_agents.implicits import IgnoreDepends, lazy_implicit
-
 from .constants import ROUTER_ADDRESSES
 
 
 async def swap_exact_tokens_for_tokens(
-    network: Annotated[
-        Literal["ethereum", "arbitrum", "base"],
-        Doc("The network to swap on"),
-    ],
     token_in: Annotated[HexAddress, Doc("The token to swap from")],
     token_out: Annotated[HexAddress, Doc("The token to swap to")],
     amount_in: Annotated[float, Doc("The amount of tokens to swap")],
     recipient: Annotated[HexAddress, Doc("The recipient of the swapped tokens")],
     slippage: Annotated[float, Doc("The slippage tolerance")],
     deadline: Annotated[int | None, Doc("The deadline for the swap")],
-    wallet: Annotated[PrivateKeyWallet, Doc("The wallet to use for the swap")],
+    network: type[Network],
+    wallet: PrivateKeyWallet,
 ) -> HexStr:
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
@@ -59,22 +54,21 @@ async def swap_exact_tokens_for_tokens(
 
 
 async def swap_exact_eth_for_tokens(
-    network: Literal["ethereum", "arbitrum", "base"],
     token_out: HexAddress,
     amount_in: float,
     recipient: HexAddress,
-    slippage: float = 0.05,
-    deadline: int | None = None,
-    wallet: Annotated[PrivateKeyWallet, Doc("The wallet to use for the swap")],
+    slippage: float,
+    deadline: Annotated[int | None, Doc("The deadline for the swap")],
+    network: type[Network],
+    wallet: PrivateKeyWallet,
 ) -> HexStr:
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
     assert deadline
-    network_type = get_network_by_name(network)
     decimals = 18
     amount_in_wei = amount_in * 10**decimals
     router_address = ROUTER_ADDRESSES[network]
-    router = UniswapV2Router[network_type](address=router_address)
+    router = UniswapV2Router[network](address=router_address)
     weth_address = await router.weth().get()
     amount_out = await router.get_amounts_out(
         amount_in=amount_in_wei,
@@ -95,26 +89,22 @@ async def swap_exact_eth_for_tokens(
 
 
 async def swap_exact_tokens_for_eth(
-    network: Annotated[
-        Literal["ethereum", "arbitrum", "base"],
-        Doc("The network to swap on"),
-    ],
     token_in: Annotated[HexAddress, Doc("The token to swap from")],
     amount_in: Annotated[float, Doc("The amount of tokens to swap")],
     recipient: Annotated[HexAddress, Doc("The recipient of the swapped tokens")],
     slippage: Annotated[float, Doc("The slippage tolerance")],
     deadline: Annotated[int | None, Doc("The deadline for the swap")],
-    wallet: Annotated[PrivateKeyWallet, Doc("The wallet to use for the swap")],
+    network: type[Network],
+    wallet: PrivateKeyWallet,
 ) -> HexStr:
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
     assert deadline
-    network_type = get_network_by_name(network)
-    token = ERC20[network_type](address=token_in)
+    token = ERC20[network](address=token_in)
     decimals = await token.decimals().get()
     amount_in_wei = amount_in * 10**decimals
     router_address = ROUTER_ADDRESSES[network]
-    router = UniswapV2Router[network_type](address=router_address)
+    router = UniswapV2Router[network](address=router_address)
     weth_address = await router.weth().get()
     amount_out = await router.get_amounts_out(
         amount_in=amount_in_wei,
