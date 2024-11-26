@@ -9,8 +9,7 @@ from emp_agents.tools.protocol.erc20 import ERC20Skill
 from emp_agents.tools.protocol.network import NetworkSkill
 from emp_agents.tools.protocol.wallets import SimpleWalletSkill
 from emp_agents.types import OpenAIModelType
-
-make_verbose(False)
+from emp_agents.tools.protocol.gmx import GmxSkill
 
 if alchemy_key := os.environ.get("ALCHEMY_KEY"):
     set_alchemy_key(alchemy_key)
@@ -29,6 +28,7 @@ agent = ERC20Agent(
         ERC20Skill,
         NetworkSkill,
         SimpleWalletSkill,
+        GmxSkill,
     ],
     default_model=OpenAIModelType.gpt4o_mini,
 )
