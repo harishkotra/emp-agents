@@ -35,9 +35,10 @@ def tool_method(func: StrCallable):
         The decorated method
     """
     # Set attribute to mark this as a protocol tool method
-    setattr(func, "_is_tool_method", True)
-    add_to_decorated_functions(func, "tool_method")
-    return staticmethod(func)
+    method = func
+    setattr(method, "_is_tool_method", True)
+    add_to_decorated_functions(method, "tool_method")
+    return method
 
 
 def onchain_action(func: StrCallable):
@@ -53,10 +54,11 @@ def onchain_action(func: StrCallable):
         The decorated method
     """
     # Set attributes to mark this as a protocol tool method and onchain action
-    setattr(func, "_is_tool_method", True)
-    setattr(func, "_is_onchain_action", True)
-    add_to_decorated_functions(func, "onchain_action")
-    return staticmethod(func)
+    method = func
+    setattr(method, "_is_tool_method", True)
+    setattr(method, "_is_onchain_action", True)
+    add_to_decorated_functions(method, "onchain_action")
+    return method
 
 
 def view_action(func: StrCallable):
@@ -72,10 +74,11 @@ def view_action(func: StrCallable):
         The decorated method
     """
     # Set attributes to mark this as a protocol tool method and view action
-    setattr(func, "_is_tool_method", True)
-    setattr(func, "_is_view_action", True)
-    add_to_decorated_functions(func, "view_action")
-    return staticmethod(func)
+    method = func
+    setattr(method, "_is_tool_method", True)
+    setattr(method, "_is_view_action", True)
+    add_to_decorated_functions(method, "view_action")
+    return method
 
 
 def cachable(func: StrCallable):
