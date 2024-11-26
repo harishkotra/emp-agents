@@ -6,10 +6,10 @@ from eth_rpc import set_alchemy_key
 from emp_agents.agents.skills import SkillsAgent
 from emp_agents.logger import make_verbose
 from emp_agents.tools.protocol.erc20 import ERC20Skill
+from emp_agents.tools.protocol.gmx import GmxSkill
 from emp_agents.tools.protocol.network import NetworkSkill
 from emp_agents.tools.protocol.wallets import SimpleWalletSkill
 from emp_agents.types import OpenAIModelType
-from emp_agents.tools.protocol.gmx import GmxSkill
 
 if alchemy_key := os.environ.get("ALCHEMY_KEY"):
     set_alchemy_key(alchemy_key)
