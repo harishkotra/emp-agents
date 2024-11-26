@@ -223,8 +223,9 @@ class AgentBase(BaseModel):
         self.conversation_history += messages
 
     def _make_client(
-        self, model: OpenAIModelType | AnthropicModelType
+        self, model: OpenAIModelType | AnthropicModelType | None = None
     ) -> OpenAIBase | AnthropicBase:
+        model = self._load_model(model)
         if isinstance(model, OpenAIModelType):
             if not self.openai_api_key:
                 raise ValueError("OpenAI API key is required")

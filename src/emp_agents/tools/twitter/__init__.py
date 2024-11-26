@@ -31,10 +31,21 @@ class TwitterSkill(SkillSet):
     @tool_method
     @staticmethod
     async def make_poll(
-        content: Annotated[str, Doc("The content of the tweet to be made.")]
+        content: Annotated[str, Doc("The content of the tweet to be made.")],
+        options: Annotated[
+            str, Doc("The options for the poll, as a comma separated list")
+        ],
+        duration_minutes: Annotated[
+            int, Doc("The duration of the poll in minutes, defaults to 1")
+        ] = 1,
     ) -> str:
         """Make a poll"""
-        return await make_poll(content)
+        options = options.lstrip("[").rstrip("]")
+        return await make_poll(
+            content,
+            duration_minutes,
+            [option.strip() for option in options.split(",")],
+        )
 
     @tool_method
     @staticmethod

@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Annotated, Callable
+from typing import Annotated
 
 from eth_rpc import PrivateKeyWallet
 from eth_rpc.networks import Network, get_network_by_name
@@ -12,34 +12,7 @@ from eth_typeshed.uniswap_v2.router.contract import (
 from eth_typing import HexAddress, HexStr
 from typing_extensions import Doc
 
-from emp_agents.implicits import Provider, IgnoreDepends
-from ..network import NetworkSkill
-from ..wallets import SimpleWalletSkill
 from .constants import ROUTER_ADDRESSES
-
-erc20_scope = Provider()
-
-
-def load_wallet() -> PrivateKeyWallet | None:
-    """
-    This can be overridden by using the scope for your agent.
-    Use `scope_load_wallet` to scope this method.
-    """
-    return SimpleWalletSkill.get_wallet()
-
-
-def load_network() -> type[Network] | None:
-    """
-    This can be overridden by using the scope for your agent.
-    Use `scope_load_network` to scope this method.
-    """
-    return NetworkSkill.get_network_type()
-
-
-def scope_load_wallet(
-    new_load_wallet: Callable[..., PrivateKeyWallet]
-) -> tuple[Provider, Callable, Callable]:
-    return (erc20_scope, load_wallet, new_load_wallet)
 
 
 async def swap_exact_tokens_for_tokens(
@@ -48,9 +21,9 @@ async def swap_exact_tokens_for_tokens(
     amount_in: Annotated[float, Doc("The amount of tokens to swap")],
     recipient: Annotated[HexAddress, Doc("The recipient of the swapped tokens")],
     slippage: Annotated[float, Doc("The slippage tolerance")],
-    deadline: Annotated[int | None, Doc("The deadline for the swap")] = None,
-    network: type[Network] = IgnoreDepends(load_network),
-    wallet: PrivateKeyWallet = IgnoreDepends(load_wallet),
+    deadline: Annotated[int | None, Doc("The deadline for the swap")],
+    network: type[Network],
+    wallet: PrivateKeyWallet,
 ) -> HexStr:
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
@@ -85,9 +58,9 @@ async def swap_exact_eth_for_tokens(
     amount_in: float,
     recipient: HexAddress,
     slippage: float,
-    deadline: Annotated[int | None, Doc("The deadline for the swap")] = None,
-    network: type[Network] = IgnoreDepends(load_network),
-    wallet: PrivateKeyWallet = IgnoreDepends(load_wallet),
+    deadline: Annotated[int | None, Doc("The deadline for the swap")],
+    network: type[Network],
+    wallet: PrivateKeyWallet,
 ) -> HexStr:
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
@@ -120,9 +93,9 @@ async def swap_exact_tokens_for_eth(
     amount_in: Annotated[float, Doc("The amount of tokens to swap")],
     recipient: Annotated[HexAddress, Doc("The recipient of the swapped tokens")],
     slippage: Annotated[float, Doc("The slippage tolerance")],
-    deadline: Annotated[int | None, Doc("The deadline for the swap")] = None,
-    network: type[Network] = IgnoreDepends(load_network),
-    wallet: PrivateKeyWallet = IgnoreDepends(load_wallet),
+    deadline: Annotated[int | None, Doc("The deadline for the swap")],
+    network: type[Network],
+    wallet: PrivateKeyWallet,
 ) -> HexStr:
     if not deadline:
         deadline = int(datetime.now(timezone.utc).timestamp()) + 60
