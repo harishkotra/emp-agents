@@ -49,7 +49,6 @@ class UniswapSkill(SkillSet):
     """
 
     @view_action
-    @staticmethod
     @inject(dependency_overrides_provider=uniswap_scope)
     async def get_price(
         network: Annotated[
@@ -65,7 +64,6 @@ class UniswapSkill(SkillSet):
         return json.dumps({"price": str(price)})
 
     @onchain_action
-    @staticmethod
     @inject(dependency_overrides_provider=uniswap_scope)
     async def swap(
         input_token: Annotated[

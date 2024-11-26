@@ -71,7 +71,6 @@ class FractionSkill(SkillSet):
     """
 
     @view_action
-    @staticmethod
     @inject(dependency_overrides_provider=math_scope)
     async def make_fraction(
         x: int = Depends(load_numerator),
@@ -81,7 +80,6 @@ class FractionSkill(SkillSet):
         return str(x / divisor)
 
     @tool_method
-    @staticmethod
     def update_denominator(new_denominator: str):
         if not new_denominator.isdigit():
             return "Thats a bad value"

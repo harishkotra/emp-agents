@@ -22,7 +22,6 @@ class MathSkill(SkillSet):
     """A skill for performing basic math operations"""
 
     @view_action
-    @staticmethod
     async def add(
         a: Annotated[int, Doc("The first number to add")],
         b: Annotated[int, Doc("The second number to add")],
@@ -31,7 +30,6 @@ class MathSkill(SkillSet):
         return a + b
 
     @view_action
-    @staticmethod
     async def subtract(
         a: Annotated[int, Doc("The first number to subtract")],
         b: Annotated[int, Doc("The second number to subtract")],

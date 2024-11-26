@@ -13,7 +13,6 @@ class DexScreenerSkill(SkillSet):
     """
 
     @tool_method
-    @staticmethod
     async def search_pairs(
         query: Annotated[str, Doc("The search query to find trading pairs")],
     ) -> str:
@@ -21,7 +20,6 @@ class DexScreenerSkill(SkillSet):
         return await DexScreenerApi.search_pairs(query)
 
     @tool_method
-    @staticmethod
     async def get_pair_by_chain(
         chain_id: Annotated[
             Literal["ethereum", "solana", "arbitrum", "base", "bsc"],
@@ -33,7 +31,6 @@ class DexScreenerSkill(SkillSet):
         return await DexScreenerApi.get_pair_by_chain(chain_id, pair_id)
 
     @tool_method
-    @staticmethod
     async def find_pairs_by_tokens(
         token_addresses: Annotated[list[str], Doc("List of token addresses (max 30)")]
     ) -> str:
@@ -41,19 +38,16 @@ class DexScreenerSkill(SkillSet):
         return await DexScreenerApi.find_pairs_by_tokens(token_addresses)
 
     @tool_method
-    @staticmethod
     async def get_token_profiles() -> str:
         """Get the latest token profiles (rate-limit 60 requests per minute)"""
         return await DexScreenerApi.get_token_profiles()
 
     @tool_method
-    @staticmethod
     async def get_latest_boosted_tokens() -> str:
         """Get the latest boosted tokens (rate-limit 60 requests per minute)"""
         return await DexScreenerApi.get_latest_boosted_tokens()
 
     @tool_method
-    @staticmethod
     async def get_top_boosted_tokens() -> str:
         """Get the tokens with most active boosts (rate-limit 60 requests per minute)"""
         return await DexScreenerApi.get_top_boosted_tokens()
