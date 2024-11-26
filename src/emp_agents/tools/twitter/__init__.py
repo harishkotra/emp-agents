@@ -13,7 +13,6 @@ class TwitterSkill(SkillSet):
     """
 
     @tool_method
-    @staticmethod
     async def make_tweet(
         content: Annotated[str, Doc("The content of the tweet to be made.")]
     ) -> str:
@@ -21,7 +20,6 @@ class TwitterSkill(SkillSet):
         return await make_tweet(content)
 
     @tool_method
-    @staticmethod
     async def make_tweet_with_image(
         content: Annotated[str, Doc("The content of the tweet to be made.")]
     ) -> str:
@@ -29,7 +27,6 @@ class TwitterSkill(SkillSet):
         return await make_tweet_with_image(content)
 
     @tool_method
-    @staticmethod
     async def make_poll(
         content: Annotated[str, Doc("The content of the tweet to be made.")],
         options: Annotated[
@@ -48,7 +45,6 @@ class TwitterSkill(SkillSet):
         )
 
     @tool_method
-    @staticmethod
     async def reply_to_tweet(
         tweet_id: Annotated[int, Doc("The ID of the tweet to reply to.")],
         content: Annotated[str, Doc("The content of the tweet to be made.")],

@@ -26,7 +26,6 @@ class SimpleWalletSkill(SkillSet):
         return PrivateKeyWallet(private_key=HexStr(key))
 
     @tool_method
-    @staticmethod
     def create_wallet() -> str:
         """Create a new private key wallet"""
 
@@ -37,7 +36,6 @@ class SimpleWalletSkill(SkillSet):
         )
 
     @tool_method
-    @staticmethod
     def set_private_key(
         private_key: Annotated[str, Doc("The private key to set")]
     ) -> str:
@@ -47,7 +45,6 @@ class SimpleWalletSkill(SkillSet):
         return "Private key set successfully"
 
     @tool_method
-    @staticmethod
     def get_private_key() -> str:
         """Get the private key from the context"""
 
@@ -57,7 +54,6 @@ class SimpleWalletSkill(SkillSet):
         return key
 
     @tool_method
-    @staticmethod
     def clear_private_key() -> str:
         """Clear the private key from the context"""
 
@@ -65,7 +61,6 @@ class SimpleWalletSkill(SkillSet):
         return "Private key cleared"
 
     @tool_method
-    @staticmethod
     def get_address() -> str:
         """Get the address of the wallet"""
 
@@ -76,7 +71,6 @@ class SimpleWalletSkill(SkillSet):
         return wallet.address
 
     @tool_method
-    @staticmethod
     @inject
     async def get_eth_balance(
         address: Annotated[
@@ -97,7 +91,6 @@ class SimpleWalletSkill(SkillSet):
         return f"Balance: {balance}"
 
     @onchain_action
-    @staticmethod
     @inject
     async def transfer_eth(
         recipient: Annotated[HexAddress, Doc("The address to transfer the ETH to")],

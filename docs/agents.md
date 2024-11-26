@@ -48,7 +48,7 @@ The following agent skills are currently available in the **emp-agents** SDK:
 - [TwitterSkill](../src/emp_agents/tools/twitter/__init__.py): A skill for managing Twitter interactions and posting tweets.
 
 
-Feel free to explore these skills and integrate them into your agents as needed. 
+Feel free to explore these skills and integrate them into your agents as needed.
 
 
 ## Extending the Skills Ecosystem
@@ -72,7 +72,6 @@ from emp_agents.models.protocol import SkillSet, view_action, onchain_action
 
 class WeatherSkill(SkillSet):
     @view_action
-    @staticmethod
     async def get_weather_info(city: Annotated[str, Doc("The name of city in the format of wttr.in")]) -> str:
         """Fetch weather data for a given city from a public."""
         url = f"https://wttr.in/{city}?format=3"
