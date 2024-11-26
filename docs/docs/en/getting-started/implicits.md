@@ -22,18 +22,16 @@ from emp_agents.agents import SkillsAgent
 
 from contextvars import ContextVar
 
-
-# we define two context variables that will be used to provide the numerator and denominator
+# we define two context variables for the skill state
 _numerator: ContextVar[Optional[str]] = ContextVar("_numerator", default=None)
 _denominator: ContextVar[Optional[int]] = ContextVar("_denominator", default=None)
 
-
-# we define a scope so the provider can be overridden
+# a scope is used to wrap the scope state management
 math_scope = Provider()
 
 
-# this is the default loader for numerator, which uses the context variable
-# it uses a string because it can be provided by the agent
+# This is the default loader for numerator, which uses the context variable.
+# It uses a string because it can also be provided by the agent
 def load_numerator() -> str:
     """
     This can be overridden by using the scope for your agent.
@@ -42,7 +40,7 @@ def load_numerator() -> str:
     return _numerator.get()
 
 
-# this is the default loader for denominator, which uses the context variable and provides an integer
+# This is the default loader for denominator, which uses the context variable and provides an integer
 # this can not be provided by the agent
 def load_denominator() -> int:
     """
@@ -52,21 +50,21 @@ def load_denominator() -> int:
     return _denominator.get()
 
 
-# this is a helper function to override the load_numerator function
+# Helper function to override the load_numerator function
 def scope_load_numerator(
     new_load_numerator: Callable[..., int]
 ) -> tuple[Provider, Callable, Callable]:
     return (math_scope, load_numerator, new_load_numerator)
 
 
-# this is a helper function to override the load_denominator function
+# Helper function to override the load_denominator function
 def scope_load_denominator(
     new_load_denominator: Callable[..., int]
 ) -> tuple[Provider, Callable, Callable]:
     return (math_scope, load_denominator, new_load_denominator)
 
 
-# lets define a skill that uses the numerator and denominator
+# Define a skill class that utilizes the numerator and denominator values
 class FractionSkill(SkillSet):
     """
     Tools for interacting with fractions.
@@ -76,17 +74,17 @@ class FractionSkill(SkillSet):
     @staticmethod
     @inject(dependency_overrides_provider=math_scope)
     async def make_fraction(
-        x: str = Depends(load_numerator),
+        x: int = Depends(load_numerator),
         divisor: int = IgnoreDepends(load_denominator),
     ) -> str:
         """divide two values, and provide the fraction as a string"""
-        return str(int(x) / divisor)
+        return str(x / divisor)
 
     @tool_method
     @staticmethod
     def update_denominator(new_denominator: str):
         if not new_denominator.isdigit():
-            return "thats a bad value"
+            return "Thats a bad value"
         _denominator.set(int(new_denominator))
         return "denominator updated"
 
@@ -98,19 +96,19 @@ class FractionAgent(SkillsAgent):
 
 
 # We create an async function, which will keep the context shared.
-# Each thread has its own context, so if you run these in separate threads, the context will not be shared
-# This is a good reason to use a different mechanism for persistence, like a database as a scoped override.
-# https://docs.python.org/3/library/contextvars.html#contextvars.Context
+# Since each thread has its own context, this is a good reason to use
+# a different mechanism for persistence like a database as a scoped override.
+# See: https://docs.python.org/3/library/contextvars.html#contextvars.Context
 async def main():
     print(await agent.answer("Make a fraction"))
     # Output: The fraction is \( \frac{21}{1} \).
 
-    # update the denominator
+    # Update the denominator
     print(await agent.answer("Update the denominator to 10"))
 
-    # make a fraction
+    # Make a fraction
     print(await agent.answer("Make a fraction"))
-    # Output: The fraction created is \( \frac{1}{10} \) which is equivalent to 0.1. If you need a different numerator, let me know!
+    # Output: The fraction created is \( \frac{1}{10} \) which is equivalent to 0.1
 
     # Lets create a new agent that overrides the numerator and denominator functions
     agent2 = FractionAgent(
@@ -128,3 +126,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+```
