@@ -66,7 +66,7 @@ class UniswapSkill(SkillSet):
 
     @onchain_action
     @staticmethod
-    @inject(dependency_overrides_provider=uniswap_scope)
+    @inject(dependency_overrides_provider=uniswap_scope)  # type: ignore[call-overload]
     async def swap(
         input_token: Annotated[
             HexAddress | None, Doc("The token to swap from.  None if ETH")

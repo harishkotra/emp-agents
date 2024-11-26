@@ -1,3 +1,4 @@
+import json
 from typing import Annotated, Literal
 
 import httpx
@@ -44,4 +45,4 @@ class GmxSkill(SkillSet):
         for token_info in token_infos:
             token_address_dict[token_info["address"]] = token_info
 
-        return token_address_dict
+        return json.dumps(token_address_dict)
