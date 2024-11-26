@@ -11,7 +11,7 @@ async def execute_tool(
     function_name: str,
     arguments: Json[Any],
 ):
-    logger.info(f"EXECUTING TOOL {function_name} with arguments {arguments}")
+    logger.info(f'Executing tool "{function_name}" with arguments {arguments}')
 
     func = tools_map[function_name]
     response = func(**arguments)
