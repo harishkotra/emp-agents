@@ -9,6 +9,7 @@ from emp_agents.models.protocol import SkillSet, view_action
 
 class GmxSkill(SkillSet):
     @view_action
+    @staticmethod
     async def get_tokens_address_dict(
         chain: Annotated[
             Literal["arbitrum", "avalanche"],

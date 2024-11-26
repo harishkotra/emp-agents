@@ -45,6 +45,7 @@ class ERC20Skill(SkillSet):
     """
 
     @view_action
+    @staticmethod
     async def describe_protocol():
         """Returns the complete protocol specification of the ERC20 protocol"""
 
@@ -55,6 +56,7 @@ class ERC20Skill(SkillSet):
             return response.text
 
     @view_action
+    @staticmethod
     @inject(dependency_overrides_provider=erc20_scope)  # type: ignore[call-overload]
     async def get_token_info(
         token_address: Annotated[str, Doc("The address of the ERC20 token.")],
@@ -81,6 +83,7 @@ class ERC20Skill(SkillSet):
         return f"name: {name}; symbol: {symbol}; decimals: {decimals}"
 
     @view_action
+    @staticmethod
     @inject(dependency_overrides_provider=erc20_scope)  # type: ignore[call-overload]
     async def get_balance(
         token_address: Annotated[str, Doc("The address of the ERC20 token.")],
@@ -107,6 +110,7 @@ class ERC20Skill(SkillSet):
         return f"Balance: {balance / 10 ** decimals}"
 
     @onchain_action
+    @staticmethod
     @inject(dependency_overrides_provider=erc20_scope)  # type: ignore[call-overload]
     async def transfer(
         token_address: Annotated[str, Doc("The address of the ERC20 token.")],
@@ -135,6 +139,7 @@ class ERC20Skill(SkillSet):
         return f"Transaction sent: {network.block_explorer.url}/tx/{tx}"
 
     @onchain_action
+    @staticmethod
     @inject(dependency_overrides_provider=erc20_scope)  # type: ignore[call-overload]
     async def approve(
         token_address: Annotated[str, Doc("The address of the ERC20 token.")],
@@ -160,6 +165,7 @@ class ERC20Skill(SkillSet):
         return f"Transaction sent: {network.block_explorer.url}/tx/{tx}"
 
     @onchain_action
+    @staticmethod
     @inject(dependency_overrides_provider=erc20_scope)  # type: ignore[call-overload]
     async def transfer_from(
         token_address: Annotated[str, Doc("The address of the ERC20 token.")],

@@ -19,7 +19,9 @@ class SkillsAgent(AgentBase):
     def model_post_init(self, __context: Any):
         super().model_post_init(__context)
 
+        print("SKILLS", self.skills)
         for skill in self.skills:
+            print(skill.__name__, skill._tools)
             for tool in skill._tools:
                 self._add_tool(tool)
 
