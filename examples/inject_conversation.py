@@ -1,17 +1,17 @@
 import asyncio
 import os
+import random
+
+from pydantic import Field
 
 from emp_agents.agents.history import AbstractConversationProvider
 from emp_agents.agents.skills import SkillsAgent
+from emp_agents.models import Message
 from emp_agents.tools.protocol.erc20 import ERC20Skill
 from emp_agents.tools.protocol.gmx import GmxSkill
 from emp_agents.tools.protocol.network import NetworkSkill
 from emp_agents.tools.protocol.wallets import SimpleWalletSkill
 from emp_agents.types import OpenAIModelType
-from emp_agents.models import Message
-from emp_agents.types import OpenAIModelType
-from pydantic import Field
-import random
 
 external_conversation = [
     Message(role="user", content="Hello, how are you?"),
@@ -31,9 +31,10 @@ class RandomConversationProvider(AbstractConversationProvider):
         external_conversation.extend(messages)
 
     def get_history(self) -> list[Message]:
-        return random.sample(
+        sample = random.sample(
             external_conversation, k=min(len(external_conversation), 2)
         )
+        return sample
 
     def reset(self) -> None:
         pass
@@ -57,7 +58,7 @@ agent = ERC20Agent(
         GmxSkill,
     ],
     default_model=OpenAIModelType.gpt4o_mini,
-    _conversation=conversation_provider,
+    conversation=conversation_provider,
 )
 
 if __name__ == "__main__":
