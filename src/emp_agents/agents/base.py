@@ -24,7 +24,6 @@ from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
 
 
 class AgentBase(BaseModel):
-    model_config = {"arbitrary_types_allowed": True}
     agent_id: str = Field(default="")
     description: str = Field(default="")
     default_model: OpenAIModelType | AnthropicModelType | None = None
