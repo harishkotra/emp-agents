@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from emp_agents.models import Message
 
 
-class AbstractConversationProvider(ABC):
+class AbstractConversationProvider(BaseModel, ABC):
     @abstractmethod
     def set_history(self, messages: list[Message]) -> None:
         pass
@@ -27,7 +27,7 @@ class AbstractConversationProvider(ABC):
         pass
 
 
-class ConversationProvider(AbstractConversationProvider, BaseModel):
+class ConversationProvider(AbstractConversationProvider):
     _history: list[Message] = []
 
     def set_history(self, messages: list[Message]) -> None:
