@@ -5,6 +5,7 @@ from typing import Any, Callable
 
 from pydantic import BaseModel, Field, PrivateAttr, computed_field, field_validator
 
+from emp_agents.agents.history import AbstractConversationProvider, ConversationProvider
 from emp_agents.exceptions import InvalidModelException
 from emp_agents.logger import logger
 from emp_agents.models import (
@@ -23,13 +24,13 @@ from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
 
 
 class AgentBase(BaseModel):
+    model_config = {"arbitrary_types_allowed": True}
     agent_id: str = Field(default="")
     description: str = Field(default="")
     default_model: OpenAIModelType | AnthropicModelType | None = None
     prompt: str = Field(default="You are a helpful assistant")
     personality: str | None = Field(default=None)
     tools: list[GenericTool] = Field(default_factory=list)
-    conversation_history: list[Message] = Field(default_factory=list)
     requires: list[str] = []
     openai_api_key: str | None = Field(
         default_factory=lambda: os.environ.get("OPENAI_API_KEY")
@@ -37,9 +38,16 @@ class AgentBase(BaseModel):
     anthropic_api_key: str | None = Field(
         default_factory=lambda: os.environ.get("ANTHROPIC_API_KEY")
     )
+    conversation: AbstractConversationProvider = Field(
+        default_factory=ConversationProvider
+    )
 
     _tools: list[GenericTool] = PrivateAttr(default_factory=list)
     _tools_map: dict[str, Callable[..., Any]] = PrivateAttr(default_factory=dict)
+
+    @property
+    def conversation_history(self) -> list[Message]:
+        return self.conversation.get_history()
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -89,16 +97,14 @@ class AgentBase(BaseModel):
                 self._tools.append(GenericTool.from_func(tool))
 
         self._tools_map = {tool.name: tool.func for tool in self._tools}
-        self.conversation_history = [
-            SystemMessage(content=self.system_prompt)
-        ] + self.conversation_history
+        self.conversation.add_message(SystemMessage(content=self.system_prompt))
 
         self._load_implicits()
 
     def get_token_count(
         self, model: OpenAIModelType | AnthropicModelType = OpenAIModelType.gpt4o_mini
     ) -> int:
-        return count_tokens(self.conversation_history, model)
+        return count_tokens(self.conversation.get_history(), model)
 
     async def summarize(
         self,
@@ -111,13 +117,13 @@ class AgentBase(BaseModel):
 
         summary = await summarize_conversation(
             self._make_client(model),
-            self.conversation_history,
+            self.conversation.get_history(),
             model=model,
             prompt=prompt,
             max_tokens=max_tokens,
         )
         if update:
-            self.conversation_history = [summary]
+            self.conversation.set_history([summary])
         assert summary.content is not None, "Summary content should always be present"
         return summary.content
 
@@ -152,7 +158,7 @@ class AgentBase(BaseModel):
         """Complete the current conversation until no more tool calls"""
         model = self._load_model(model)
         return await self._run_conversation(
-            self.conversation_history,
+            self.conversation.get_history(),
             model=model,
             max_tokens=max_tokens,
             response_format=response_format,
@@ -168,7 +174,6 @@ class AgentBase(BaseModel):
         """Core conversation loop handling tool calls"""
         client = self._make_client(model)
         conversation = messages.copy()
-
         while True:
             request = Request(
                 messages=conversation,
@@ -185,7 +190,7 @@ class AgentBase(BaseModel):
                 conversation += [AssistantMessage(content=response.text)]
 
             if not response.tool_calls:
-                self.conversation_history = conversation
+                self.conversation.set_history(conversation)
                 return response.text
 
             tool_invocation_coros = [
@@ -207,7 +212,7 @@ class AgentBase(BaseModel):
                 if hasattr(self, "conversation_history"):
                     logger.info(message)
                 conversation += [message]
-                self.conversation_history = conversation
+                self.conversation.set_history(conversation)
 
     async def answer(
         self,
@@ -215,7 +220,8 @@ class AgentBase(BaseModel):
         model: OpenAIModelType | AnthropicModelType | None = None,
         response_format: type[BaseModel] | None = None,
     ) -> str:
-        self.conversation_history += [Message(role=Role.user, content=question)]
+        self.conversation.add_message(Message(role=Role.user, content=question))
+
         return await self.complete(
             model=model,
             response_format=response_format,
@@ -225,13 +231,13 @@ class AgentBase(BaseModel):
         self,
         message: Message,
     ) -> None:
-        self.conversation_history += [message]
+        self.conversation.add_message(message)
 
     def add_messages(
         self,
         messages: list[Message],
     ) -> None:
-        self.conversation_history += messages
+        self.conversation.add_messages(messages)
 
     def _make_client(
         self, model: OpenAIModelType | AnthropicModelType | None = None
@@ -254,7 +260,7 @@ class AgentBase(BaseModel):
         return await self.answer(question, model)
 
     async def reset(self):
-        self.conversation_history = []
+        self.conversation.reset()
 
     @property
     def system_prompt(self) -> str:
@@ -264,7 +270,7 @@ class AgentBase(BaseModel):
         return prompt.strip()
 
     def print_conversation(self) -> None:
-        for message in self.conversation_history:
+        for message in self.conversation.get_history():
             print(f"{message.role}: {message.content}")
 
     def _make_message(self, content: str, role: Role = Role.user) -> Message:
