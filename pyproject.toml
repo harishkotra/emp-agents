@@ -29,7 +29,7 @@ dependencies = [
     "eth-rpc-py",
     "eth-typeshed-py",
     "fast-depends>=2.4.0",
-    "httpx==0.27.2",
+    "httpx>=0.28.1",
     "pydantic==2.9.2",
     "tiktoken==0.7.0",
     "fast_depends>=2.4.0",
