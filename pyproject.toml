@@ -24,7 +24,7 @@ keywords = ["emp", "agents", "python"]
 
 dependencies = [
     "aiohttp==3.10.5",
-    "anthropic==0.34.0",
+    "anthropic==0.42.0",
     "cryptography==43.0.3",
     "eth-rpc-py",
     "eth-typeshed-py",
@@ -33,6 +33,7 @@ dependencies = [
     "pydantic==2.9.2",
     "tiktoken==0.7.0",
     "fast_depends>=2.4.0",
+    "pyyaml"
 ]
 
 [project.optional-dependencies]
