@@ -28,3 +28,5 @@ agent = AgentBase(
 
 agent.run_sync()
 ```
+
+Check out the cookbooks and example modules for additional examples.
