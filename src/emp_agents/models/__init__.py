@@ -10,7 +10,7 @@ from .shared import (
     ToolMessage,
     UserMessage,
 )
-from .shared.tools import GenericTool, Property
+from emp_agents.models.shared.tools import GenericTool, Property
 
 __all__ = [
     "GenericTool",
