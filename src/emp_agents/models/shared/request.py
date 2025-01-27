@@ -1,10 +1,10 @@
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from emp_agents.models.shared.message import Message, SystemMessage
+from emp_agents.models.shared.message import Message, SystemMessage, UserMessage
 from emp_agents.models.shared.tools import GenericTool
-from emp_agents.types import ModelType, Role
+from emp_agents.types import ModelType, OpenAIModelType, Role
 
 
 class Request(BaseModel):
@@ -55,6 +55,21 @@ class Request(BaseModel):
         result["messages"] = [m.model_dump(exclude_none=True) for m in messages]
         return result
 
+    def _refine_for_oai_reasoning_models(
+        self, result: dict[str, Any]
+    ) -> dict[str, Any]:
+        """
+        Awkwardly, OpenAI reasoning models do not accept system messages.
+        They also accept some transformed parameters.
+        """
+        result["max_completion_tokens"] = result["max_tokens"]
+        del result["max_tokens"]
+        del result["tools"]
+        for message in result["messages"]:
+            if message["role"] == "system":
+                message["role"] = "user"
+        return result
+
     def to_openai(self):
         exclude = ["system"]
         result = self.model_dump(exclude_none=True)
@@ -101,4 +116,15 @@ class Request(BaseModel):
         for field in exclude:
             if field in result:
                 del result[field]
-        return result
+
+        is_reasoning_model = self.model in {
+            OpenAIModelType.gpt_o1_mini,
+            OpenAIModelType.gpt_o1_preview,
+            OpenAIModelType.o1,
+            OpenAIModelType.o1_24_12_17,
+        }
+        return (
+            self._refine_for_oai_reasoning_models(result)
+            if is_reasoning_model
+            else result
+        )

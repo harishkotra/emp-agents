@@ -18,7 +18,7 @@ class Usage(BaseModel):
 class Choice(BaseModel):
     index: int
     message: AssistantMessage
-    logprobs: Optional[str]
+    logprobs: Optional[str] = None
     finish_reason: FinishReason
 
     @property
