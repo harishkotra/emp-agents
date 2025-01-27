@@ -10,6 +10,8 @@ class OpenAIModelType(StrEnum):
     gpt4o = "gpt-4o"
     gpt_o1_mini = "o1-mini"
     gpt_o1_preview = "o1-preview"
+    o1 = "o1"
+    o1_24_12_17 = "o1-2024-12-17"
 
 
 class AnthropicModelType(StrEnum):
