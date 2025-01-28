@@ -1,12 +1,10 @@
 from abc import abstractmethod
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 from pydantic import BaseModel
 
 from ..types import TCompletionAgent
 from .shared import Message, Request, ToolCall
-from .shared.request import Request
-from .shared.message import Message, ToolCall
 
 
 class ResponseT(BaseModel):
