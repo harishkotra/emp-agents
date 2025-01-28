@@ -1,3 +1,5 @@
+from emp_agents.models.shared.tools import GenericTool, Property
+
 from .provider import Provider, ResponseT
 from .shared import (
     AssistantMessage,
@@ -9,7 +11,6 @@ from .shared import (
     ToolMessage,
     UserMessage,
 )
-from emp_agents.models.shared.tools import GenericTool, Property
 
 __all__ = [
     "GenericTool",

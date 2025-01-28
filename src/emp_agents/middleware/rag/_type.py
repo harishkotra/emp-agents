@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from emp_agents.agents.base import Message
+
 from .. import Middleware
 
 
