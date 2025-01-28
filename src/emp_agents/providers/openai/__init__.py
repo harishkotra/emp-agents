@@ -1,5 +1,5 @@
 import os
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import httpx
 from pydantic import Field
@@ -23,6 +23,21 @@ class OpenAIProvider(Provider[Response]):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}",
         }
+
+    def _refine_for_oai_reasoning_models(
+        self, result: dict[str, Any]
+    ) -> dict[str, Any]:
+        """
+        Awkwardly, OpenAI reasoning models do not accept system messages.
+        They also accept some transformed parameters.
+        """
+        result["max_completion_tokens"] = result["max_tokens"]
+        del result["max_tokens"]
+        del result["tools"]
+        for message in result["messages"]:
+            if message["role"] == "system":
+                message["role"] = "user"
+        return result
 
     def _from_request(self, request: Request):
         exclude = ["system"]
@@ -72,7 +87,18 @@ class OpenAIProvider(Provider[Response]):
         for field in exclude:
             if field in result:
                 del result[field]
-        return result
+
+        is_reasoning_model = request.model in {
+            OpenAIModelType.gpt_o1_mini,
+            OpenAIModelType.gpt_o1_preview,
+            OpenAIModelType.o1,
+            OpenAIModelType.o1_24_12_17,
+        }
+        return (
+            self._refine_for_oai_reasoning_models(result)
+            if is_reasoning_model
+            else result
+        )
 
     async def completion(self, request: Request) -> Response:
         openai_request = self._from_request(request)
