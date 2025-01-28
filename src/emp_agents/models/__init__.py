@@ -1,4 +1,3 @@
-from .middleware import Middleware
 from .provider import Provider, ResponseT
 from .shared import (
     AssistantMessage,
@@ -16,7 +15,6 @@ __all__ = [
     "GenericTool",
     "Message",
     "Property",
-    "Middleware",
     "Provider",
     "Request",
     "ResponseT",
