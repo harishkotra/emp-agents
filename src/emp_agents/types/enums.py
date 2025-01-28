@@ -30,6 +30,3 @@ class Role(StrEnum):
     user = "user"
     assistant = "assistant"
     tool = "tool"
-
-
-ModelType = AnthropicModelType | OpenAIModelType
