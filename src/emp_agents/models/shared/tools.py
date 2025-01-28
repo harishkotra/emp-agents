@@ -101,9 +101,9 @@ class GenericTool(BaseModel):
                 type=type_["type"],
                 description=type_["description"],
                 enum=type_.get("enum"),
-                properties=type_.get("properties"),
+                properties=type_.get("properties"),  # type: ignore
                 required=type_.get("required"),
-                items=type_.get("items"),
+                items=type_.get("items"),  # type: ignore
             )
             for name, type_ in schema["parameters"]["properties"].items()
         }
@@ -118,26 +118,6 @@ class GenericTool(BaseModel):
                 if value.default == inspect._empty
             ],
             func=func,
-        )
-
-    def to_openai(self):
-        from ..openai.tool import Function, Parameters, Property
-        from ..openai.tool import Tool as Tool
-
-        return Tool(
-            type="function",
-            function=Function(
-                description=self.description,
-                name=self.name,
-                parameters=Parameters(
-                    properties={
-                        key: Property(**param.model_dump(exclude_none=True))
-                        for key, param in self.parameters.items()
-                    },
-                    required=self.required,
-                ),
-            ),
-            strict=True,
         )
 
     def to_anthropic(self):

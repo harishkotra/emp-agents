@@ -2,10 +2,9 @@ from typing import TYPE_CHECKING
 
 import tiktoken
 
-from emp_agents.types import AnthropicModelType, OpenAIModelType, Role
-
 if TYPE_CHECKING:
-    from emp_agents.models import AnthropicBase, Message, OpenAIBase
+    from emp_agents.models import Message, Provider
+    from emp_agents.providers.openai.types import OpenAIModelType
 
 DEFAULT_SUMMARY_PROMPT = """
 You are an assistant that summarizes conversations concisely.
@@ -27,8 +26,9 @@ def format_conversation(conversation: list["Message"]) -> str:
 
 def count_tokens(
     messages: list["Message"] | str,
-    model: OpenAIModelType | AnthropicModelType = OpenAIModelType.gpt4o_mini,
+    model: "OpenAIModelType | str" = "gpt-4o-mini",
 ) -> int:
+    """OpenAI tokenizer is a good estimator for other providers token counts"""
     encoding = tiktoken.encoding_for_model(model)
     tokens = 0
     if isinstance(messages, list):
@@ -44,9 +44,9 @@ def count_tokens(
 
 
 async def summarize_conversation(
-    client: "OpenAIBase | AnthropicBase",
+    provider: "Provider",
     messages: list["Message"],
-    model: OpenAIModelType | AnthropicModelType,
+    model: str,
     prompt: str | None = None,
     max_tokens: int = 500,
 ) -> "Message":
@@ -69,7 +69,7 @@ async def summarize_conversation(
             max_tokens=max_tokens,
             temperature=0.5,
         )
-        response = await client.completion(
+        response = await provider.completion(
             request,
         )
         return AssistantMessage(content=response.text)
