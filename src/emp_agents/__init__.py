@@ -1,8 +1,8 @@
 from . import tools
 from .agents import AgentBase
 from .models import GenericTool, Message, Property, Request
-from .types import Role
 from .providers import AnthropicProvider, OpenAIProvider
+from .types import Role
 
 __all__ = [
     "AgentBase",

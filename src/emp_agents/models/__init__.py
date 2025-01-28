@@ -1,3 +1,5 @@
+from .middleware import Middleware
+from .provider import Provider, ResponseT
 from .shared import (
     AssistantMessage,
     Message,
@@ -9,8 +11,6 @@ from .shared import (
     UserMessage,
 )
 from .shared.tools import GenericTool, Property
-from .middleware import Middleware
-from .provider import ResponseT, Provider
 
 __all__ = [
     "GenericTool",

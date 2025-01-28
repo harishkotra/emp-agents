@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from emp_agents.agents import AgentBase
 from emp_agents.exceptions import InvalidModelException
 from emp_agents.providers import AnthropicProvider, OpenAIProvider
-from emp_agents.providers.openai.types import OpenAIModelType
 from emp_agents.providers.anthropic.types import AnthropicModelType
+from emp_agents.providers.openai.types import OpenAIModelType
 
 
 class AgentForTesting(AgentBase):

@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 import tiktoken
 
 if TYPE_CHECKING:
-    from emp_agents.providers.openai.types import OpenAIModelType
     from emp_agents.models import Message, Provider
+    from emp_agents.providers.openai.types import OpenAIModelType
 
 DEFAULT_SUMMARY_PROMPT = """
 You are an assistant that summarizes conversations concisely.

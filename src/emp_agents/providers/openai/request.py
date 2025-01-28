@@ -4,8 +4,9 @@ from pydantic import BaseModel, ConfigDict, Field, PlainSerializer
 
 from emp_agents.models.shared import Message
 from emp_agents.models.shared.tools import GenericTool
-from .types import OpenAIModelType
+
 from .tool import Tool
+from .types import OpenAIModelType
 
 
 class Request(BaseModel):

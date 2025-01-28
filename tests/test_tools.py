@@ -5,7 +5,7 @@ from typing_extensions import Doc
 
 from emp_agents.agents import AgentBase
 from emp_agents.models import GenericTool
-from emp_agents.providers.openai import OpenAIProvider, OpenAIModelType
+from emp_agents.providers.openai import OpenAIModelType, OpenAIProvider
 
 
 def say_hi(names: Annotated[list[str], Doc("a list of names to say hi to")]):

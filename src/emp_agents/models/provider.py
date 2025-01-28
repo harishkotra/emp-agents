@@ -3,8 +3,8 @@ from typing import TypeVar
 
 from pydantic import BaseModel
 
-from .shared import Request, Message, ToolCall
 from ..types import TCompletionAgent
+from .shared import Message, Request, ToolCall
 
 
 class ResponseT(BaseModel):

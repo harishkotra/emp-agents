@@ -4,9 +4,8 @@ from typing import Optional
 from pydantic import BaseModel
 
 from emp_agents.models import AssistantMessage, Message, ResponseT, ToolCall
-from .types import OpenAIModelType
 
-from .types import FinishReason
+from .types import FinishReason, OpenAIModelType
 
 
 class Usage(BaseModel):

@@ -1,6 +1,6 @@
 import asyncio
 from textwrap import dedent
-from typing import Any, Callable, Awaitable
+from typing import Any, Awaitable, Callable
 
 from pydantic import (
     BaseModel,

@@ -1,5 +1,6 @@
-import pytest
 import os
+
+import pytest
 
 from emp_agents import AgentBase
 from emp_agents.providers import OpenAIProvider
