@@ -3,7 +3,7 @@ Conversations that become too long end up taking up too much memory in the conte
 To summarize a conversation, you can use the `summarize_conversation` function.
 
 ```python
-from emp_agents import AgentBase
+from emp_agents import AgentBase, OpenAIProvider
 from emp_agents.models import Role, UserMessage, AssistantMessage
 from emp_agents.utils import summarize_conversation
 
@@ -15,7 +15,7 @@ messages = [
     UserMessage(content="What's the best baseball team?"),
     AssistantMessage(content="The best baseball team is the Boston Red Sox. They are a very successful team that has won many championships and have a really interesting history."),
 ]
-agent = AgentBase()
+agent = AgentBase(provider=OpenAIProvider())
 agent.add_messages(messages)
 summary = await agent.summarize(
     prompt="Provide a summary in a single sentence.",

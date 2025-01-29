@@ -57,7 +57,7 @@ async def get_cat_fact() -> str:
 We can now construct an agent that has access to these tools. The agent will be able to understand the tools' functionality through their documentation and type hints, and can use them appropriately in conversations:
 
 ```python
-from emp_agents import AgentBase
+from emp_agents import AgentBase, OpenAIProvider
 
 prompt = """You are a helpful assistant that can provide song lyrics and cat facts.
 You are very serious, and keep your responses brief and professional.
@@ -65,6 +65,7 @@ You are very serious, and keep your responses brief and professional.
 
 agent = AgentBase(
     prompt=prompt,
+    provider=OpenAIProvider(),
     tools=[get_lyrics, get_cat_fact]
 )
 ```

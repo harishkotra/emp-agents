@@ -1,4 +1,9 @@
-from .anthropic import AnthropicProvider
-from .openai import OpenAIProvider
+from .anthropic import AnthropicProvider, AnthropicModelType
+from .openai import OpenAIProvider, OpenAIModelType
 
-__all__ = ["AnthropicProvider", "OpenAIProvider"]
+__all__ = [
+    "AnthropicProvider",
+    "OpenAIProvider",
+    "AnthropicModelType",
+    "OpenAIModelType",
+]

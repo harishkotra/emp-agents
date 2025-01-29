@@ -16,6 +16,7 @@ You can also define a skill that uses `Provider` to scope dependencies.  This al
 import asyncio
 from typing import Optional, Callable
 
+from emp_agents import OpenAIProvider
 from emp_agents.models.protocol import SkillSet, tool_method, view_action
 from emp_agents.implicits import Provider, Depends, IgnoreDepends, inject
 from emp_agents.agents import SkillsAgent
@@ -100,6 +101,7 @@ class FractionAgent(SkillsAgent):
 async def main():
     agent = FractionAgent(
         prompt="You are a helpful assistant that provides terse responses as fractions",
+        provider=OpenAIProvider(),
         skills=[
             FractionSkill,
         ],
@@ -119,6 +121,7 @@ async def main():
     agent2 = FractionAgent(
         skills=[FractionSkill],
         prompt="You are a helpful assistant that provides terse responses as fractions",
+        provider=OpenAIProvider(),
         scopes=[
             scope_load_numerator(lambda: "1000"),
             scope_load_denominator(lambda: 10),

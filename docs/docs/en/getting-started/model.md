@@ -31,16 +31,18 @@ For AnthropicBase agents, you can use any of these AnthropicModelType values:
 Then, when you create an agent, you can specify the model type as a parameter:
 
 ```python
-from emp_agents import AgentBase
-from emp_agents.types import OpenAIModelType, AnthropicModelType
+from emp_agents import AgentBase, OpenAIProvider, AnthropicProvider
+from emp_agents.providers import OpenAIModelType, AnthropicModelType
 
 # for openai models
 agent = AgentBase(
+    provider=OpenAIProvider(),
     default_model=OpenAIModelType.gpt4o_mini
 )
 
 # or for anthropic
 agent = AgentBase(
+    provider=AnthropicProvider(),
     default_model=AnthropicModelType.claude_3_5_sonnet
 )
 ```

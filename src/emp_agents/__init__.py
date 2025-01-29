@@ -1,4 +1,4 @@
-from . import middleware, tools
+from . import tools
 from .agents import AgentBase
 from .models import (
     AssistantMessage,

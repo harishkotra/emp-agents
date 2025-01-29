@@ -13,7 +13,7 @@ from pydantic import (
 
 from emp_agents.agents.history import AbstractConversationProvider, ConversationProvider
 from emp_agents.logger import logger
-from emp_agents.middleware import Middleware
+from emp_agents.models.middleware import Middleware
 from emp_agents.models import (
     AssistantMessage,
     GenericTool,
@@ -181,10 +181,9 @@ class AgentBase(BaseModel):
         for middleware in self.middleware:
             _conversation = middleware.process(conversation)
             if isinstance(_conversation, Awaitable):
-                conversation = await _conversation
+                conversation = await _conversation  # type: ignore
             else:
                 conversation = _conversation
-        print("CONVERSATION", conversation)
         while True:
             request = Request(
                 messages=conversation,

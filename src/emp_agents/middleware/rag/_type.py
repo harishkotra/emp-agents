@@ -1,15 +1,17 @@
 from abc import abstractmethod
+from typing import TYPE_CHECKING
 
-from emp_agents.agents.base import Message
+from emp_agents.models.middleware import Middleware
 
-from .. import Middleware
+if TYPE_CHECKING:
+    from emp_agents.agents.base import Message
 
 
 class Rag(Middleware):
     @abstractmethod
     async def get_context(self, query: str) -> str: ...
 
-    async def process(self, messages: list[Message]) -> list[Message]:
+    async def process(self, messages: list["Message"]) -> list["Message"]:
         if len(messages) == 0:
             return messages
 

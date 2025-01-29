@@ -5,6 +5,7 @@ search:
 - [Overview](index.md)
 - Tutorial
     - [Getting Started](getting-started/index.md)
+    - [Provider](getting-started/provider.md)
     - [Model](getting-started/model.md)
     - [Conversation](getting-started/conversation.md)
     - [Summarize](getting-started/summarize.md)
