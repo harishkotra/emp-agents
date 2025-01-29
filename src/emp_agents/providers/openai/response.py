@@ -32,7 +32,7 @@ class Response(ResponseT):
     model: OpenAIModelType | str
     choices: list[Choice]
     usage: Usage
-    system_fingerprint: Optional[str]
+    system_fingerprint: Optional[str] = None
 
     @property
     def text(self) -> str:

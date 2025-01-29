@@ -2,7 +2,7 @@
 
 Providers are used to connect the `AgentBase` to different LLM providers.
 
-Currently we support OpenAI and Anthropic using `OpenAIProvider` and `AnthropicProvider`.
+Currently we support OpenAI, Anthropic and OpenRouter using `OpenAIProvider`, `AnthropicProvider` and `OpenRouterProvider`.
 
 In order to integrate an additional provider, you need to create a new provider class that implements the `Provider` protocol.
 
@@ -39,6 +39,7 @@ Update your environment variables with your provider's api key.
 ```bash
 export OPENAI_API_KEY=...
 export ANTHROPIC_API_KEY=...
+export OPENROUTER_API_KEY=...
 ```
 
 Then you can inject the provider as a dependency into the `AgentBase` class.
