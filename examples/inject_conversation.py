@@ -20,7 +20,6 @@ external_conversation = [
 
 
 class RandomConversationProvider(AbstractConversationProvider):
-
     def set_history(self, messages: list[Message]) -> None:
         pass
 
