@@ -1,5 +1,5 @@
-from .anthropic import AnthropicProvider, AnthropicModelType
-from .openai import OpenAIProvider, OpenAIModelType
+from .anthropic import AnthropicModelType, AnthropicProvider
+from .openai import OpenAIModelType, OpenAIProvider
 
 __all__ = [
     "AnthropicProvider",

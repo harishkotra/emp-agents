@@ -24,6 +24,5 @@ __all__ = [
     "Role",
     "SystemMessage",
     "UserMessage",
-    "middleware",
     "tools",
 ]

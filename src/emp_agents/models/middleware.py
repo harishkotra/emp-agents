@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Awaitable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Awaitable
 
 from pydantic import BaseModel
 

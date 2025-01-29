@@ -2,6 +2,7 @@ An agent can be loaded from a config object, using the `PersistentAgentConfig` a
 
 
 ```python
+from emp_agents import OpenAIProvider
 from emp_agents.config.agent_config import PersistentAgentConfig
 from emp_agents.agents.persistentagent import PersistentAgent
 
@@ -14,5 +15,5 @@ config = PersistentAgentConfig(
     tools=[],
     requires=[],
 )
-agent = PersistentAgent.from_config(config)
+agent = PersistentAgent.from_config(config, provider=OpenAIProvider())
 ```
