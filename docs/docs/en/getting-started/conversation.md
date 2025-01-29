@@ -22,10 +22,12 @@ message = UserMessage(content="hello how are you?")
 You can then create a convesation in a few ways.  For example, you can construct the conversation history manually:
 
 ```python
-from emp_agents import AgentBase
+from emp_agents import AgentBase, AssistantMessage, OpenAIProvider, UserMessage
 from emp_agents.models import Message, Role
 
-agent = AgentBase()
+agent = AgentBase(
+    provider=OpenAIProvider(),
+)
 message = UserMessage(content="hello how are you?")
 agent.add_message(message)
 
@@ -35,14 +37,14 @@ agent.add_message(message)
 message = UserMessage(content="Why did you say that?")
 agent.add_message(message)
 
-response = await agent.run_conversation()
+response = await agent.complete()
 print(agent.conversation_history)
 ```
 
 Or you can communicate with the agent using the `answer` method, which will automatically add the user's message to the conversation history:
 
 ```python
-agent = AgentBase()
+agent = AgentBase(provider=OpenAIProvider())
 response = await agent.answer("How are you today?")
 print(agent.conversation_history)
 ```
@@ -50,7 +52,7 @@ print(agent.conversation_history)
 The other option is to use the `run` method, which will automatically add the user's message to the conversation history, and run it in interactive mode:
 
 ```python
-agent = AgentBase()
+agent = AgentBase(provider=OpenAIProvider())
 
 # to run async
 await agent.run()

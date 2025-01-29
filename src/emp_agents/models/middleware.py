@@ -1,11 +1,17 @@
-from typing import Awaitable, Callable
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Awaitable
 
 from pydantic import BaseModel
 
-from emp_agents.models.shared import Message
+if TYPE_CHECKING:
+    from emp_agents.models import Message
 
 
-class Middleware(BaseModel):
+class Middleware(BaseModel, ABC):
     name: str
     description: str
-    function: Callable[[list[Message]], Awaitable[list[Message]] | list[Message]]
+
+    @abstractmethod
+    async def process(
+        self, messages: list["Message"]
+    ) -> Awaitable[list["Message"]] | list["Message"]: ...

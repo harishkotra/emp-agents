@@ -41,10 +41,11 @@ class MathSkill(SkillSet):
 This can then be utilized by an agent by providing it to the agent's `skills` parameter.
 
 ```python
-from emp_agents import AgentBase
+from emp_agents import AgentBase, OpenAIProvider
 
 agent = AgentBase(
     prompt="You are a helpful assistant that can perform basic math operations",
+    provider=OpenAIProvider(),
     skills=[
         MathSkill,
     ],

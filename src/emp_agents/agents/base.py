@@ -17,7 +17,6 @@ from emp_agents.models import (
     AssistantMessage,
     GenericTool,
     Message,
-    Middleware,
     Provider,
     Request,
     ResponseT,
@@ -25,6 +24,7 @@ from emp_agents.models import (
     ToolMessage,
     UserMessage,
 )
+from emp_agents.models.middleware import Middleware
 from emp_agents.providers.openai import OpenAIModelType
 from emp_agents.types import Role
 from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
@@ -179,9 +179,9 @@ class AgentBase(BaseModel):
         """Core conversation loop handling tool calls"""
         conversation = messages.copy()
         for middleware in self.middleware:
-            _conversation = middleware.function(conversation)
+            _conversation = middleware.process(conversation)
             if isinstance(_conversation, Awaitable):
-                conversation = await _conversation
+                conversation = await _conversation  # type: ignore
             else:
                 conversation = _conversation
         while True:
