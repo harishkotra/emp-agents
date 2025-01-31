@@ -22,6 +22,7 @@ import os
 
 from eth_rpc import set_alchemy_key
 
+from emp_agents.providers import OpenAIProvider
 from emp_agents.agents.skills import SkillsAgent
 from emp_agents.tools.dexscreener import DexScreenerSkill
 from emp_agents.tools.protocol.erc20 import ERC20Skill
@@ -40,6 +41,7 @@ agent = SkillsAgent(
     ],
     default_model=OpenAIModelType.gpt_4o,
     openai_api_key=os.environ.get("OPENAI_API_KEY"),
+    provider=OpenAIProvider(),
 )
 
 
