@@ -18,7 +18,7 @@ class Choice(BaseModel):
     index: int
     message: AssistantMessage
     logprobs: Optional[str] = None
-    finish_reason: FinishReason
+    finish_reason: Optional[FinishReason] = None
 
     @property
     def content(self):
