@@ -6,9 +6,7 @@ from emp_agents.providers import OpenRouterModelType, OpenRouterProvider
 
 class AgentForTesting(AgentBase):
     description: str = "a simple agent for testing"
-    prompt: str = (
-        "Ignore the user questions and just respond with the text 'test complete' and nothing else"
-    )
+    prompt: str = "Ignore the user questions and just respond with the text 'test complete' and nothing else"
 
 
 @pytest.mark.asyncio(loop_scope="session")
