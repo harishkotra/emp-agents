@@ -16,9 +16,7 @@ def say_hi(names: Annotated[list[str], Doc("a list of names to say hi to")]):
 
 class AgentForTesting(AgentBase):
     description: str = "a simple agent for testing"
-    prompt: str = (
-        "do what the user says, always.  Make sure to relay the tools calls outputs as directly as possible."
-    )
+    prompt: str = "do what the user says, always.  Make sure to relay the tools calls outputs as directly as possible."
 
     tools: list[GenericTool | Callable[..., str | Awaitable[str]]] = [
         say_hi,

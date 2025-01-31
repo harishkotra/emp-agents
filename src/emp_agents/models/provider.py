@@ -20,7 +20,8 @@ class ResponseT(BaseModel):
 
     @property
     @abstractmethod
-    def tool_calls(self) -> list[ToolCall]: ...
+    def tool_calls(self) -> list[ToolCall]:
+        ...
 
 
 Response = TypeVar("Response", bound=ResponseT)
@@ -38,4 +39,5 @@ class Provider(BaseModel, TCompletionAgent[Response]):
         return model
 
     @abstractmethod
-    async def completion(self, request: Request) -> Response: ...
+    async def completion(self, request: Request) -> Response:
+        ...
