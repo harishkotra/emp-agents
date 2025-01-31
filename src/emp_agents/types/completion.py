@@ -10,5 +10,4 @@ T = TypeVar("T")
 
 class TCompletionAgent(ABC, Generic[T]):
     @abstractmethod
-    async def completion(self, req: "Request") -> T:
-        ...
+    async def completion(self, req: "Request") -> T: ...
