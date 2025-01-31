@@ -14,4 +14,5 @@ class Middleware(BaseModel, ABC):
     @abstractmethod
     async def process(
         self, messages: list["Message"]
-    ) -> Awaitable[list["Message"]] | list["Message"]: ...
+    ) -> Awaitable[list["Message"]] | list["Message"]:
+        ...
