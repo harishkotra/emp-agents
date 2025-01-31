@@ -22,12 +22,11 @@ import os
 
 from eth_rpc import set_alchemy_key
 
-from emp_agents.providers import OpenAIProvider
+from emp_agents.providers import OpenAIProvider, OpenAIModelType
 from emp_agents.agents.skills import SkillsAgent
 from emp_agents.tools.dexscreener import DexScreenerSkill
 from emp_agents.tools.protocol.erc20 import ERC20Skill
 from emp_agents.tools.protocol.wallets import SimpleWalletSkill
-from emp_agents.types import OpenAIModelType
 
 if alchemy_key := os.environ.get("ALCHEMY_KEY"):
     set_alchemy_key(alchemy_key)
@@ -39,7 +38,7 @@ agent = SkillsAgent(
         SimpleWalletSkill,
         DexScreenerSkill,
     ],
-    default_model=OpenAIModelType.gpt_4o,
+    default_model=OpenAIModelType.gpt4o_mini,
     openai_api_key=os.environ.get("OPENAI_API_KEY"),
     provider=OpenAIProvider(),
 )
