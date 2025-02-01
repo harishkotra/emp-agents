@@ -35,7 +35,7 @@ class DexScreenerSkill(SkillSet):
     @tool_method
     @staticmethod
     async def find_pairs_by_tokens(
-        token_addresses: Annotated[list[str], Doc("List of token addresses (max 30)")]
+        token_addresses: Annotated[list[str], Doc("List of token addresses (max 30)")],
     ) -> str:
         """Get pairs by token addresses (rate-limit 300 requests per minute)"""
         return await DexScreenerApi.find_pairs_by_tokens(token_addresses)

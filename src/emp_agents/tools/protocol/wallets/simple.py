@@ -39,7 +39,7 @@ class SimpleWalletSkill(SkillSet):
     @tool_method
     @staticmethod
     def set_private_key(
-        private_key: Annotated[str, Doc("The private key to set")]
+        private_key: Annotated[str, Doc("The private key to set")],
     ) -> str:
         """Set the private key in the context"""
 
