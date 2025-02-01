@@ -9,8 +9,7 @@ if TYPE_CHECKING:
 
 class Rag(Middleware):
     @abstractmethod
-    async def get_context(self, query: str) -> str:
-        ...
+    async def get_context(self, query: str) -> str: ...
 
     async def process(self, messages: list["Message"]) -> list["Message"]:
         if len(messages) == 0:

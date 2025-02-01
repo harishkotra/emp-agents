@@ -38,7 +38,7 @@ def load_network() -> type[Network] | None:
 
 
 def scope_load_wallet(
-    new_load_wallet: Callable[..., PrivateKeyWallet]
+    new_load_wallet: Callable[..., PrivateKeyWallet],
 ) -> tuple[Provider, Callable, Callable]:
     return (uniswap_scope, load_wallet, new_load_wallet)
 

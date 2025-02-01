@@ -99,7 +99,7 @@ async def make_tweet_with_image(
 
 
 async def make_tweet(
-    content: Annotated[str, Doc("The content of the tweet to be made.")]
+    content: Annotated[str, Doc("The content of the tweet to be made.")],
 ):
     """
     Make a tweet.  Returns "tweet submitted" if successful, or if there is an error, returns the error message.
