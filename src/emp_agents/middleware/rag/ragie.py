@@ -9,7 +9,9 @@ from ._type import Rag
 
 class Ragie(Rag):
     name: str = "Ragie Middleware"
-    description: str = "This middleware uses the Ragie API to retrieve context from relevant datasources."
+    description: str = (
+        "This middleware uses the Ragie API to retrieve context from relevant datasources."
+    )
     BASE_URL: ClassVar[str] = "https://api.ragie.ai"
 
     api_key: str | None = Field(

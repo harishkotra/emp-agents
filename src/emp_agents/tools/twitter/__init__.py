@@ -15,7 +15,7 @@ class TwitterSkill(SkillSet):
     @tool_method
     @staticmethod
     async def make_tweet(
-        content: Annotated[str, Doc("The content of the tweet to be made.")]
+        content: Annotated[str, Doc("The content of the tweet to be made.")],
     ) -> str:
         """Make a tweet"""
         return await make_tweet(content)
@@ -23,10 +23,11 @@ class TwitterSkill(SkillSet):
     @tool_method
     @staticmethod
     async def make_tweet_with_image(
-        content: Annotated[str, Doc("The content of the tweet to be made.")]
+        content: Annotated[str, Doc("The content of the tweet to be made.")],
+        image_url: Annotated[str, Doc("The URL of the image to be uploaded.")],
     ) -> str:
         """Make a tweet with an image"""
-        return await make_tweet_with_image(content)
+        return await make_tweet_with_image(content, image_url)
 
     @tool_method
     @staticmethod
