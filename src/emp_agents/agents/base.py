@@ -43,6 +43,9 @@ class AgentBase(BaseModel):
     conversation: AbstractConversationProvider = Field(
         default_factory=ConversationProvider
     )
+    sync_tools: bool = Field(
+        True, description="If true, tools will be executed synchronously"
+    )
 
     # This can be used to modify the conversation before completion, such as RAG
     middleware: list[Middleware] = Field(default_factory=list)
@@ -158,7 +161,9 @@ class AgentBase(BaseModel):
         self,
         model: str | None = None,
         max_tokens: int | None = None,
+        temperature: float | None = None,
         response_format: type[BaseModel] | None = None,
+        **kwargs: Any,
     ) -> str:
         """Complete the current conversation until no more tool calls"""
         _model = self._load_model(model)
@@ -166,7 +171,9 @@ class AgentBase(BaseModel):
             self.conversation.get_history(),
             model=_model,
             max_tokens=max_tokens,
+            temperature=temperature,
             response_format=response_format,
+            **kwargs,
         )
 
     async def _run_conversation(
@@ -174,7 +181,9 @@ class AgentBase(BaseModel):
         messages: list[Message],
         model: str,
         max_tokens: int | None = None,
+        temperature: float | None = None,
         response_format: type[BaseModel] | None = None,
+        **kwargs: Any,
     ) -> str:
         """Core conversation loop handling tool calls"""
         conversation = messages.copy()
@@ -190,7 +199,9 @@ class AgentBase(BaseModel):
                 model=model,
                 tools=self._tools,
                 max_tokens=max_tokens or 1_000,
+                temperature=temperature,
                 response_format=response_format,
+                **kwargs,
             )
             response: ResponseT = await self.provider.completion(request)
             conversation += response.messages
@@ -207,7 +218,10 @@ class AgentBase(BaseModel):
                 )
                 for tool_call in response.tool_calls
             ]
-            tool_results = await asyncio.gather(*tool_invocation_coros)
+            if self.sync_tools:
+                tool_results = [await coro for coro in tool_invocation_coros]
+            else:
+                tool_results = await asyncio.gather(*tool_invocation_coros)
             for result, tool_call in zip(tool_results, response.tool_calls):
                 message = ToolMessage(
                     content=result,
