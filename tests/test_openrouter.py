@@ -12,6 +12,9 @@ class AgentForTesting(AgentBase):
 
 
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.skip(
+    reason="This test is disabled because it requires an OpenRouter API key"
+)
 async def test_basic_agent():
     agent = AgentForTesting(
         provider=OpenRouterProvider(
