@@ -43,6 +43,8 @@ The context window affects:
 See the [Summarizing Conversations](../getting-started/summarize.md) section for practical examples of context management.
 
 ```python
+import asyncio
+
 from emp_agents import AgentBase
 from emp_agents.models import Role, UserMessage, AssistantMessage
 
@@ -53,7 +55,7 @@ messages = [
 
 agent = AgentBase()
 agent.add_messages(messages)
-token_count = agent.get_token_count()
+token_count = asyncio.run(agent.get_token_count())
 print(token_count)
 
 # Output: 35
