@@ -56,7 +56,7 @@ class AgentBase(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @property
-    def conversation_history(self) -> list[Message]:
+    def conversation_history(self) -> list[Message] | Awaitable[list[Message]]:
         return self.conversation.get_history()
 
     @computed_field  # type: ignore[prop-decorator]
@@ -107,12 +107,17 @@ class AgentBase(BaseModel):
 
         self._load_implicits()
 
-    def get_token_count(
+    async def get_token_count(
         self,
         model: str | OpenAIModelType = "gpt4o_mini",
     ) -> int:
         """A utility to get the token count for openai models, fairly accurate across all providers"""
-        return count_tokens(self.conversation.get_history(), model)
+        maybe_coro = self.conversation.get_history()
+        if isinstance(maybe_coro, Awaitable):
+            conversation = await maybe_coro
+        else:
+            conversation = maybe_coro
+        return count_tokens(conversation, model)
 
     async def summarize(
         self,
@@ -123,9 +128,15 @@ class AgentBase(BaseModel):
     ) -> str:
         model = self._load_model(model)
 
+        maybe_coro = self.conversation.get_history()
+        if isinstance(maybe_coro, Awaitable):
+            conversation = await maybe_coro
+        else:
+            conversation = maybe_coro
+
         summary = await summarize_conversation(
             self.provider,
-            self.conversation.get_history(),
+            conversation,
             model=model,
             prompt=prompt,
             max_tokens=max_tokens,
@@ -167,8 +178,13 @@ class AgentBase(BaseModel):
     ) -> str:
         """Complete the current conversation until no more tool calls"""
         _model = self._load_model(model)
+        maybe_coro = self.conversation.get_history()
+        if isinstance(maybe_coro, Awaitable):
+            conversation = await maybe_coro
+        else:
+            conversation = maybe_coro
         return await self._run_conversation(
-            self.conversation.get_history(),
+            conversation,
             model=_model,
             max_tokens=max_tokens,
             temperature=temperature,
@@ -274,8 +290,13 @@ class AgentBase(BaseModel):
         prompt = self.prompt
         return prompt.strip()
 
-    def print_conversation(self) -> None:
-        for message in self.conversation.get_history():
+    async def print_conversation(self) -> None:
+        maybe_coro = self.conversation.get_history()
+        if isinstance(maybe_coro, Awaitable):
+            conversation = await maybe_coro
+        else:
+            conversation = maybe_coro
+        for message in conversation:
             print(f"{message.role}: {message.content}")
 
     def _make_message(self, content: str, role: Role = Role.user) -> Message:

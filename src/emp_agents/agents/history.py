@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Awaitable
 
 from pydantic import BaseModel
 
@@ -23,7 +24,7 @@ class AbstractConversationProvider(BaseModel, ABC):
         pass
 
     @abstractmethod
-    def get_history(self) -> list[Message]:
+    def get_history(self) -> list[Message] | Awaitable[list[Message]]:
         pass
 
 
@@ -43,5 +44,5 @@ class ConversationProvider(AbstractConversationProvider):
     def reset(self) -> None:
         self._history.clear()
 
-    def get_history(self) -> list[Message]:
+    def get_history(self) -> list[Message] | Awaitable[list[Message]]:
         return self._history.copy()
