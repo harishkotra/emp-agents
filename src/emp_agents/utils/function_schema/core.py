@@ -93,6 +93,10 @@ def get_function_schema(  # noqa: C901
         "required": [],
     }
     for name, param in params.items():
+        # TODO: this is a hack to ignore the self parameter, I'm sure there's a better way to catch it
+        # ignore self parameter
+        if name == "self":
+            continue
         param_args = get_args(param.annotation)
         is_annotated = get_origin(param.annotation) is Annotated
 
