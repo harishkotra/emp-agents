@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Awaitable
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, PrivateAttr
 
 from emp_agents.models import Message
 
@@ -29,7 +29,7 @@ class AbstractConversationProvider(BaseModel, ABC):
 
 
 class ConversationProvider(AbstractConversationProvider):
-    _history: list[Message] = Field(default_factory=list)
+    _history: list[Message] = PrivateAttr(default_factory=list)
 
     def set_history(self, messages: list[Message]) -> None:
         self.reset()
