@@ -38,7 +38,7 @@ class AgentBase(BaseModel):
     tools: Sequence[GenericTool | Callable[..., str | Awaitable[str]]] = Field(
         default_factory=list
     )
-    requires: list[str] = []
+    requires: list[str] = Field(default_factory=list)
     provider: Provider
     conversation: AbstractConversationProvider = Field(
         default_factory=ConversationProvider
