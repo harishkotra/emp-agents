@@ -1,11 +1,9 @@
-import os
-
 from emp_agents.agents.planner import Planner
-from emp_agents.types import OpenAIModelType
+from emp_agents.providers import OpenAIModelType, OpenAIProvider
 
 agent = Planner(
+    provider=OpenAIProvider(),
     default_model=OpenAIModelType.gpt4o_mini,
-    openai_api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
 
