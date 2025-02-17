@@ -1,6 +1,6 @@
 import asyncio
 from textwrap import dedent
-from typing import Any, Awaitable, Callable
+from typing import Any, Awaitable, Callable, Sequence
 
 from pydantic import (
     BaseModel,
@@ -35,7 +35,7 @@ class AgentBase(BaseModel):
     description: str = Field(default="")
     default_model: str | None = None
     prompt: str = Field(default="You are a helpful assistant")
-    tools: list[GenericTool | Callable[..., str | Awaitable[str]]] = Field(
+    tools: Sequence[GenericTool | Callable[..., str | Awaitable[str]]] = Field(
         default_factory=list
     )
     requires: list[str] = []
