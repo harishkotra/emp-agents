@@ -121,7 +121,7 @@ class GenericTool(BaseModel):
         )
 
     def to_anthropic(self):
-        from ..anthropic.tool import Property, Tool, ToolSchema
+        from emp_agents.providers.anthropic.tool import Property, Tool, ToolSchema
 
         return Tool(
             name=self.name,

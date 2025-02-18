@@ -2,20 +2,18 @@ import asyncio
 import os
 import random
 
-from pydantic import Field
-
 from emp_agents.agents.history import AbstractConversationProvider
 from emp_agents.agents.skills import SkillsAgent
-from emp_agents.models import Message
+from emp_agents.models import AssistantMessage, Message, UserMessage
+from emp_agents.providers import OpenAIModelType, OpenAIProvider
 from emp_agents.tools.protocol.erc20 import ERC20Skill
 from emp_agents.tools.protocol.gmx import GmxSkill
 from emp_agents.tools.protocol.network import NetworkSkill
 from emp_agents.tools.protocol.wallets import SimpleWalletSkill
-from emp_agents.types import OpenAIModelType
 
 external_conversation = [
-    Message(role="user", content="Hello, how are you?"),
-    Message(role="assistant", content="I'm fine, thank you!"),
+    UserMessage(content="Hello, how are you?"),
+    AssistantMessage(content="I'm fine, thank you!"),
 ]
 
 
@@ -56,6 +54,7 @@ agent = ERC20Agent(
         SimpleWalletSkill,
         GmxSkill,
     ],
+    provider=OpenAIProvider(),
     default_model=OpenAIModelType.gpt4o_mini,
     conversation=conversation_provider,
 )

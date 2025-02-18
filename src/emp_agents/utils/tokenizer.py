@@ -4,7 +4,7 @@ import tiktoken
 
 from emp_agents.models import SystemMessage, UserMessage
 from emp_agents.models.shared import Request
-from emp_agents.types import OpenAIModelType
+from emp_agents.providers import OpenAIModelType
 
 if TYPE_CHECKING:
     from emp_agents.models.openai import OpenAIBase
