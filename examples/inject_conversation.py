@@ -4,12 +4,12 @@ import random
 
 from emp_agents.agents.history import AbstractConversationProvider
 from emp_agents.agents.skills import SkillsAgent
-from emp_agents.models import Message, UserMessage, AssistantMessage
+from emp_agents.models import AssistantMessage, Message, UserMessage
+from emp_agents.providers import OpenAIModelType, OpenAIProvider
 from emp_agents.tools.protocol.erc20 import ERC20Skill
 from emp_agents.tools.protocol.gmx import GmxSkill
 from emp_agents.tools.protocol.network import NetworkSkill
 from emp_agents.tools.protocol.wallets import SimpleWalletSkill
-from emp_agents.providers import OpenAIModelType, OpenAIProvider
 
 external_conversation = [
     UserMessage(content="Hello, how are you?"),
