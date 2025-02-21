@@ -1,6 +1,6 @@
 import asyncio
 from textwrap import dedent
-from typing import Any, Awaitable, Callable, Sequence
+from typing import Any, Awaitable, Callable, Sequence, TypeVar, Type, overload, cast
 
 from pydantic import (
     BaseModel,
@@ -28,6 +28,8 @@ from emp_agents.models.middleware import Middleware
 from emp_agents.providers.openai import OpenAIModelType
 from emp_agents.types import Role
 from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
+
+T = TypeVar("T", bound=BaseModel)
 
 
 class AgentBase(BaseModel):
@@ -146,13 +148,32 @@ class AgentBase(BaseModel):
         assert summary.content is not None, "Summary content should always be present"
         return summary.content
 
+    @overload
     async def respond(
         self,
         question: str,
+        response_format: Type[str] | None,
         model: str | None = None,
         max_tokens: int | None = None,
-        response_format: type[BaseModel] | None = None,
-    ) -> str:
+    ) -> str: ...
+
+    @overload
+    async def respond(
+        self,
+        question: str,
+        response_format: Type[T],
+        model: str | None = None,
+        max_tokens: int | None = None,
+    ) -> T:
+        """Send a one-off question and get a response"""
+
+    async def respond(
+        self,
+        question: str,
+        response_format: Type[T] | Type[str] | None = None,
+        model: str | None = None,
+        max_tokens: int | None = None,
+    ) -> T | str:
         """Send a one-off question and get a response"""
         if model is None:
             model = self._default_model
@@ -161,21 +182,49 @@ class AgentBase(BaseModel):
             SystemMessage(content=self.system_prompt),
             UserMessage(content=question),
         ]
-        return await self._run_conversation(
+        if response_format not in [None, str]:
+            return await self._run_conversation(
+                conversation,
+                model=model,
+                max_tokens=max_tokens,
+            )
+        response_format = cast(Type[T], response_format)
+        response = await self._run_conversation(
             conversation,
             model=model,
             max_tokens=max_tokens,
             response_format=response_format,
         )
+        return response_format.model_validate_json(response)
 
+    @overload
     async def complete(
         self,
+        response_format: Type[str] | None = None,
         model: str | None = None,
         max_tokens: int | None = None,
         temperature: float | None = None,
-        response_format: type[BaseModel] | None = None,
         **kwargs: Any,
-    ) -> str:
+    ) -> str: ...
+
+    @overload
+    async def complete(
+        self,
+        response_format: Type[T],
+        model: str | None = None,
+        max_tokens: int | None = None,
+        temperature: float | None = None,
+        **kwargs: Any,
+    ) -> T: ...
+
+    async def complete(
+        self,
+        response_format: Type[T] | Type[str] | None = None,
+        model: str | None = None,
+        max_tokens: int | None = None,
+        temperature: float | None = None,
+        **kwargs: Any,
+    ) -> T | str:
         """Complete the current conversation until no more tool calls"""
         _model = self._load_model(model)
         maybe_coro = self.conversation.get_history()
@@ -183,14 +232,26 @@ class AgentBase(BaseModel):
             conversation = await maybe_coro
         else:
             conversation = maybe_coro
-        return await self._run_conversation(
+
+        if response_format in [None, str]:
+            response = await self._run_conversation(
+                conversation,
+                model=_model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                **kwargs,
+            )
+            return response
+
+        response_format = cast(Type[T], response_format)
+        response = await self._run_conversation(
             conversation,
             model=_model,
             max_tokens=max_tokens,
             temperature=temperature,
             response_format=response_format,
-            **kwargs,
         )
+        return response_format.model_validate_json(response)
 
     async def _run_conversation(
         self,
@@ -198,7 +259,7 @@ class AgentBase(BaseModel):
         model: str,
         max_tokens: int | None = None,
         temperature: float | None = None,
-        response_format: type[BaseModel] | None = None,
+        response_format: Type[T] | None = None,
         **kwargs: Any,
     ) -> str:
         """Core conversation loop handling tool calls"""
@@ -250,14 +311,35 @@ class AgentBase(BaseModel):
                 conversation += [message]
                 self.conversation.set_history(conversation)
 
+    @overload
     async def answer(
         self,
         question: str,
+        response_format: Type[str] | None = None,
         model: str | None = None,
-        response_format: type[BaseModel] | None = None,
-    ) -> str:
+    ) -> str: ...
+
+    @overload
+    async def answer(
+        self,
+        question: str,
+        response_format: Type[T],
+        model: str | None = None,
+    ) -> T: ...
+
+    async def answer(
+        self,
+        question: str,
+        response_format: Type[T] | Type[str] | None = None,
+        model: str | None = None,
+    ) -> T | str:
         self.conversation.add_message(Message(role=Role.user, content=question))
 
+        if response_format in [None, str]:
+            return await self.complete(
+                model=model,
+            )
+        response_format = cast(Type[T], response_format)
         return await self.complete(
             model=model,
             response_format=response_format,
@@ -310,7 +392,6 @@ class AgentBase(BaseModel):
                 break
             conversation += [UserMessage(content=question)]
             response = await self.answer(question)
-            print(response)
             conversation += [AssistantMessage(content=response)]
 
     def _add_tool(self, tool: GenericTool) -> None:

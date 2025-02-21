@@ -57,4 +57,4 @@ async def test_response_format():
     response = await agent.answer(
         "what is the meaning of life?", response_format=LifeMeaning
     )
-    LifeMeaning.model_validate_json(response)
+    assert isinstance(response, LifeMeaning)
