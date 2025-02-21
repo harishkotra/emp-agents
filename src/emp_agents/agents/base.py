@@ -182,7 +182,7 @@ class AgentBase(BaseModel):
             SystemMessage(content=self.system_prompt),
             UserMessage(content=question),
         ]
-        if response_format not in [None, str]:
+        if response_format in [None, str]:
             return await self._run_conversation(
                 conversation,
                 model=model,
