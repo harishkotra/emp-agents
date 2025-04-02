@@ -10,7 +10,7 @@ from .models import (
     SystemMessage,
     UserMessage,
 )
-from .providers import AnthropicProvider, DeepSeekProvider, OpenAIProvider
+from .providers import AnthropicProvider, DeepSeekProvider, GrokProvider, OpenAIProvider
 from .types import Role
 
 __all__ = [
@@ -19,6 +19,7 @@ __all__ = [
     "AssistantMessage",
     "DeepSeekProvider",
     "GenericTool",
+    "GrokProvider",
     "Message",
     "Middleware",
     "OpenAIProvider",
