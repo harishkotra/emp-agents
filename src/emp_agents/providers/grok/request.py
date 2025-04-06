@@ -37,9 +37,7 @@ class Request(BaseModel):
 
     frequency_penalty: Optional[float] = Field(default=None, ge=-2.0, le=2.0)
     presence_penalty: Optional[float] = Field(default=None, ge=-2.0, le=2.0)
-    num_responses: Optional[int] = Field(
-        default=None, serialization_alias="n"
-    )
+    num_responses: Optional[int] = Field(default=None, serialization_alias="n")
     top_p: Optional[int] = Field(default=None)
 
     def model_dump(self, *, exclude_none=True, by_alias=True, **kwargs):
