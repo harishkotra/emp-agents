@@ -4,14 +4,14 @@ from pydantic import BaseModel, ConfigDict, Field, PlainSerializer
 
 from emp_agents.models.shared import Message
 from emp_agents.models.shared.tools import GenericTool
+from emp_agents.providers.openai.tool import Tool
 
-from .tool import Tool
 from .types import GrokModelType
 
 
 class Request(BaseModel):
     """
-    Request model for Grok API
+    Request model for Grok API, which follows the OpenAI API format.
     """
 
     model_config = ConfigDict(populate_by_name=True)

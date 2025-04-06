@@ -137,7 +137,12 @@ class GenericTool(BaseModel):
         )
 
     def to_grok(self):
-        from emp_agents.providers.grok.tool import Function, Parameters, Property, Tool
+        from emp_agents.providers.openai.tool import (
+            Function,
+            Parameters,
+            Property,
+            Tool,
+        )
 
         return Tool(
             type="function",
