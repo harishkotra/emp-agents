@@ -46,7 +46,7 @@ class AgentBase(BaseModel):
         default_factory=ConversationProvider
     )
     sync_tools: bool = Field(
-        True, description="If true, tools will be executed synchronously"
+        default=True, description="If true, tools will be executed synchronously"
     )
 
     # This can be used to modify the conversation before completion, such as RAG
