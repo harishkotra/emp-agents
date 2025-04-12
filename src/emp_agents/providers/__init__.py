@@ -3,6 +3,7 @@ from .deepseek import DeepSeekModelType, DeepSeekProvider
 from .grok import GrokModelType, GrokProvider
 from .openai import OpenAIModelType, OpenAIProvider
 from .openrouter import OpenRouterModelType, OpenRouterProvider
+from .standard_request import StandardRequest
 
 __all__ = [
     "AnthropicProvider",
@@ -15,4 +16,5 @@ __all__ = [
     "OpenAIModelType",
     "OpenRouterProvider",
     "OpenRouterModelType",
+    "StandardRequest",
 ]
