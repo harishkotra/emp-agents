@@ -8,7 +8,7 @@ from emp_agents.models.shared.tools import GenericTool
 ModelType = TypeVar("ModelType")
 
 
-class StandardRequest(Generic[ModelType], BaseModel):
+class StandardRequest(BaseModel, Generic[ModelType]):
     """
     Generic request model that can be used by all platforms that mimic the OpenAI format.
     """

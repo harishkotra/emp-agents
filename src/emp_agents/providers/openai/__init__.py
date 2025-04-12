@@ -6,7 +6,8 @@ from pydantic import Field
 
 from emp_agents.models import GenericTool, Provider, Request, SystemMessage
 
-from .request import Message, Tool
+from emp_agents.models.shared.message import Message
+from .request import Tool
 from .response import Response
 from .tool import Function, Parameters, Property
 from .types import Classification, OpenAIModelType
