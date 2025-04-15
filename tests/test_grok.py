@@ -11,6 +11,18 @@ class AgentForTesting(AgentBase):
 
 
 @pytest.mark.asyncio
+async def test_grok_responds():
+    from emp_agents import AgentBase
+
+    agent = AgentBase(
+        provider=GrokProvider(),
+        model=GrokModelType.grok_3,
+    )
+    response = await agent.answer("what is the weather in san francisco?")
+    assert response is not None
+
+
+@pytest.mark.asyncio
 async def test_grok_provider():
     agent = AgentForTesting(
         provider=GrokProvider(
@@ -30,7 +42,7 @@ def test_grok_provider_init():
     )
     assert provider.default_model == GrokModelType.grok_1_5
     assert provider.api_key == "test_api_key"
-    assert provider.URL == "https://api.grok.x/v1/chat/completions"
+    assert provider.URL == "https://api.x.ai/v1/chat/completions"
 
 
 def test_grok_request_formatting():

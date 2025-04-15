@@ -1,5 +1,5 @@
 import os
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Generic, TypeVar
 
 import httpx
 from pydantic import Field
@@ -13,11 +13,14 @@ from .tool import Function, Parameters, Property
 from .types import Classification, OpenAIModelType
 
 
-class OpenAIProvider(Provider[Response]):
+ModelType = TypeVar("ModelType", bound=str)
+
+
+class OpenAIProviderBase(Provider[Response], Generic[ModelType]):
     URL: ClassVar[str] = "https://api.openai.com/v1/chat/completions"
 
     api_key: str = Field(default_factory=lambda: os.environ["OPENAI_API_KEY"])
-    default_model: OpenAIModelType = Field(default=OpenAIModelType.gpt4o_mini)
+    default_model: ModelType
 
     @property
     def headers(self):
@@ -129,6 +132,10 @@ class OpenAIProvider(Provider[Response]):
             ),
             strict=True,
         )
+
+
+class OpenAIProvider(OpenAIProviderBase[OpenAIModelType]):
+    default_model: OpenAIModelType = Field(default=OpenAIModelType.gpt4o_mini)
 
 
 __all__ = [

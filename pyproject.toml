@@ -7,7 +7,7 @@ name = "emp-agents"
 version = "0.3.0"
 description = "A Python library for building low-code, capable and extensible autonomous agent systems."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = "^3.10"
 license = {text = "MIT"}
 authors = [
   {name = "Johnny"},
@@ -76,3 +76,12 @@ profile = "black"
 line_length = 88
 known_third_party = ["pytest", "black", "isort"]
 default_section = "THIRDPARTY"
+
+[tool.poetry.group.dev.dependencies]
+flake8-pyproject = "^1.2.3"
+pytest = "^7.0.0"
+pytest-asyncio = "^0.23.0"
+
+[tool.flake8]
+ignore = ["W503"]
+max-line-length = 160
