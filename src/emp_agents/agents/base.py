@@ -384,15 +384,21 @@ class AgentBase(BaseModel):
     def _make_message(self, content: str, role: Role = Role.user) -> Message:
         return Message.build(content, role)
 
-    async def run(self):
-        conversation = [SystemMessage(content=self.system_prompt)]
+    async def run(
+        self,
+        conversation_handler: Callable[[str], Awaitable[None]] | None = None,
+    ):
+        conversation: list[Message] = [SystemMessage(content=self.system_prompt)]
         while True:
             question = input("You: ")
             if question == "":
                 break
-            conversation += [UserMessage(content=question)]
+            conversation.append(UserMessage(content=question))
             response = await self.answer(question)
-            conversation += [AssistantMessage(content=response)]
+            conversation.append(AssistantMessage(content=response))
+            print(f"Assistant: {response}")
+            if conversation_handler:
+                await conversation_handler(response)
 
     def _add_tool(self, tool: GenericTool) -> None:
         self._tools.append(tool)
