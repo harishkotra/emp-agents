@@ -12,7 +12,6 @@ from .response import Response
 from .tool import Function, Parameters, Property
 from .types import Classification, OpenAIModelType
 
-
 ModelType = TypeVar("ModelType", bound=str)
 
 
