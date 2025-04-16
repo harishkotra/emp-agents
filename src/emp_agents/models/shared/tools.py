@@ -136,6 +136,30 @@ class GenericTool(BaseModel):
             ),
         )
 
+    def to_grok(self):
+        from emp_agents.providers.openai.tool import (
+            Function,
+            Parameters,
+            Property,
+            Tool,
+        )
+
+        return Tool(
+            type="function",
+            function=Function(
+                description=self.description,
+                name=self.name,
+                parameters=Parameters(
+                    properties={
+                        key: Property(**param.model_dump(exclude_none=True))
+                        for key, param in self.parameters.items()
+                    },
+                    required=self.required,
+                ),
+            ),
+            strict=True,
+        )
+
     def __repr__(self):
         description = self.description.strip().replace("\n", " ")[:100]
         if len(description) >= 50:
