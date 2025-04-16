@@ -7,7 +7,7 @@ name = "emp-agents"
 version = "0.3.1"
 description = "A Python library for building low-code, capable and extensible autonomous agent systems."
 readme = "README.md"
-requires-python = "^3.10"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
   {name = "Johnny"},
