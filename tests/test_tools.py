@@ -25,7 +25,7 @@ class AgentForTesting(AgentBase):
     ]
 
 
-@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.asyncio(scope="session")
 async def test_tools():
     agent = AgentForTesting(
         provider=OpenAIProvider(

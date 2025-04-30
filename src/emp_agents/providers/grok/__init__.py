@@ -1,5 +1,4 @@
 import os
-from typing import ClassVar
 
 from pydantic import Field
 
@@ -15,7 +14,7 @@ class GrokProvider(OpenAIProviderBase[GrokModelType]):
     This inherits from OpenAIProvider since the APIs are compatible.
     """
 
-    URL: ClassVar[str] = "https://api.x.ai/v1/chat/completions"
+    url: str = "https://api.x.ai/v1/chat/completions"
 
     api_key: str = Field(default_factory=lambda: os.environ["GROK_API_KEY"])
     default_model: GrokModelType = Field(default=GrokModelType.grok_2)

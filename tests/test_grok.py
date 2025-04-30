@@ -1,7 +1,7 @@
 import pytest
 
 from emp_agents.agents import AgentBase
-from emp_agents.models import GenericTool, Property, Request, UserMessage
+from emp_agents.models import FunctionTool, Property, Request, UserMessage
 from emp_agents.providers import GrokModelType, GrokProvider
 
 
@@ -42,7 +42,7 @@ def test_grok_provider_init():
     )
     assert provider.default_model == GrokModelType.grok_1_5
     assert provider.api_key == "test_api_key"
-    assert provider.URL == "https://api.x.ai/v1/chat/completions"
+    assert provider.url == "https://api.x.ai/v1/chat/completions"
 
 
 def test_grok_request_formatting():
@@ -66,7 +66,7 @@ def test_grok_with_tools():
     """Test that GrokProvider formats requests with tools correctly"""
     provider = GrokProvider(api_key="test_api_key")
 
-    weather_tool = GenericTool(
+    weather_tool = FunctionTool(
         name="get_weather",
         description="Get the current weather in a location",
         parameters={

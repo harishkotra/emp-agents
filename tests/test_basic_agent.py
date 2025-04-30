@@ -15,7 +15,7 @@ class AgentForTesting(AgentBase):
     )
 
 
-@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.asyncio(scope="session")
 async def test_basic_agent():
     agent = AgentForTesting(
         provider=OpenAIProvider(
@@ -31,7 +31,7 @@ async def test_basic_agent():
     assert response == "test complete"
 
 
-@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.asyncio(scope="session")
 async def test_basic_agent_no_model():
     agent = AgentForTesting(
         provider=AnthropicProvider(),
@@ -47,7 +47,7 @@ class LifeMeaning(BaseModel):
     excuses: list[str]
 
 
-@pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.asyncio(scope="session")
 async def test_response_format():
     agent = AgentForTesting(
         provider=AnthropicProvider(

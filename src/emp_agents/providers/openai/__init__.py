@@ -1,5 +1,5 @@
 import os
-from typing import Any, ClassVar, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 import httpx
 from pydantic import Field
@@ -16,8 +16,7 @@ ModelType = TypeVar("ModelType", bound=str)
 
 
 class OpenAIProviderBase(Provider[Response], Generic[ModelType]):
-    URL: ClassVar[str] = "https://api.openai.com/v1/chat/completions"
-
+    url: str
     api_key: str = Field(default_factory=lambda: os.environ["OPENAI_API_KEY"])
     default_model: ModelType
 
@@ -107,7 +106,7 @@ class OpenAIProviderBase(Provider[Response], Generic[ModelType]):
     async def completion(self, request: Request) -> Response:
         openai_request = self._from_request(request)
         async with httpx.AsyncClient(headers=self.headers) as client:
-            response = await client.post(self.URL, json=openai_request, timeout=None)
+            response = await client.post(self.url, json=openai_request, timeout=None)
         if response.status_code >= 400:
             raise ValueError(response.json())
         return Response(**response.json())
@@ -134,6 +133,8 @@ class OpenAIProviderBase(Provider[Response], Generic[ModelType]):
 
 
 class OpenAIProvider(OpenAIProviderBase[OpenAIModelType]):
+    url: str = Field(default="https://api.openai.com/v1/chat/completions")
+
     default_model: OpenAIModelType = Field(default=OpenAIModelType.gpt4o_mini)
 
 

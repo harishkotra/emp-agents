@@ -1,4 +1,4 @@
-from emp_agents.models.shared.tools import GenericTool, Property
+from emp_agents.models.shared.tools import FunctionTool, GenericTool, MCPTool, Property
 
 from .middleware import Middleware
 from .provider import Provider, ResponseT
@@ -25,6 +25,8 @@ __all__ = [
     "SystemMessage",
     "UserMessage",
     "AssistantMessage",
+    "MCPTool",
     "ToolCall",
     "ToolMessage",
+    "FunctionTool",
 ]
