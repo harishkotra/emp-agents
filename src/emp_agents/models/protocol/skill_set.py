@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from pydantic import BaseModel, PrivateAttr
 
-from emp_agents.models import GenericTool
+from emp_agents.models import GenericTool, FunctionTool
 from emp_agents.models.protocol.registry import ToolRegistry
 
 
@@ -21,7 +21,7 @@ class SkillSet(BaseModel):
         items = cls.__dict__.values()
         for method in items:
             if hasattr(method, "_is_tool_method"):
-                cls._tools_map[method.__name__] = GenericTool.from_func(method)
+                cls._tools_map[method.__name__] = FunctionTool.from_func(method)
 
         cls._tools = list(cls._tools_map.values())
         ToolRegistry.register_class(cls)

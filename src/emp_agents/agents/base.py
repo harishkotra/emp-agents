@@ -16,6 +16,7 @@ from emp_agents.logger import logger
 from emp_agents.models import (
     AssistantMessage,
     GenericTool,
+    FunctionTool,
     Message,
     Provider,
     Request,
@@ -24,10 +25,12 @@ from emp_agents.models import (
     ToolMessage,
     UserMessage,
 )
+from emp_agents.exceptions import DuplicateToolException
 from emp_agents.models.middleware import Middleware
 from emp_agents.providers.openai import OpenAIModelType
 from emp_agents.types import Role
 from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
+from emp_agents.types.mcp import MCPClient, SSEParams
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -48,10 +51,12 @@ class AgentBase(BaseModel):
     sync_tools: bool = Field(
         default=True, description="If true, tools will be executed synchronously"
     )
+    mcp_clients: list[str] = Field(default_factory=list)
 
     # This can be used to modify the conversation before completion, such as RAG
     middleware: list[Middleware] = Field(default_factory=list)
 
+    _mcp_clients: list[MCPClient] = PrivateAttr(default_factory=list)
     _tools: list[GenericTool] = PrivateAttr(default_factory=list)
     _tools_map: dict[str, Callable[..., Any]] = PrivateAttr(default_factory=dict)
 
@@ -87,7 +92,7 @@ class AgentBase(BaseModel):
         cls, v: list[Callable[..., Any] | GenericTool]
     ) -> list[GenericTool]:
         return [
-            GenericTool.from_func(tool) if not isinstance(tool, GenericTool) else tool
+            FunctionTool.from_func(tool) if not isinstance(tool, GenericTool) else tool
             for tool in v
         ]
 
@@ -101,13 +106,30 @@ class AgentBase(BaseModel):
         for tool in self.tools:
             if isinstance(tool, GenericTool):
                 self._tools.append(tool)
+            elif callable(tool):
+                self._tools.append(FunctionTool.from_func(tool))
             else:
-                self._tools.append(GenericTool.from_func(tool))
+                raise ValueError(f"Invalid tool type: {type(tool)}")
 
-        self._tools_map = {tool.name: tool.func for tool in self._tools}
+        self._tools_map = {tool.name: tool.execute for tool in self._tools}
         self.conversation.add_message(SystemMessage(content=self.system_prompt))
 
         self._load_implicits()
+
+        for mcp_client in self.mcp_clients:
+            self._mcp_clients.append(
+                MCPClient(
+                    params=SSEParams(
+                        url=mcp_client,
+                    )
+                )
+            )
+
+    async def initialize_mcp_clients(self):
+        for mcp_client in self._mcp_clients:
+            tools = await mcp_client.list_tools()
+            for tool in tools:
+                self._add_tool(tool)
 
     async def get_token_count(
         self,
@@ -391,7 +413,7 @@ class AgentBase(BaseModel):
         conversation: list[Message] = [SystemMessage(content=self.system_prompt)]
         while True:
             question = input("You: ")
-            if question == "":
+            if question in ["", "exit", "quit", "q"]:
                 break
             conversation.append(UserMessage(content=question))
             response = await self.answer(question)
@@ -402,7 +424,9 @@ class AgentBase(BaseModel):
 
     def _add_tool(self, tool: GenericTool) -> None:
         self._tools.append(tool)
-        self._tools_map[tool.name] = tool.func
+        if tool.name in self._tools_map:
+            raise DuplicateToolException(f"Tool {tool.name} already exists")
+        self._tools_map[tool.name] = tool.execute
 
     def run_sync(self):
         asyncio.run(self.run())
