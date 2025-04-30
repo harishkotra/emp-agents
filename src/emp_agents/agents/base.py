@@ -12,11 +12,12 @@ from pydantic import (
 )
 
 from emp_agents.agents.history import AbstractConversationProvider, ConversationProvider
+from emp_agents.exceptions import DuplicateToolException
 from emp_agents.logger import logger
 from emp_agents.models import (
     AssistantMessage,
-    GenericTool,
     FunctionTool,
+    GenericTool,
     Message,
     Provider,
     Request,
@@ -25,12 +26,11 @@ from emp_agents.models import (
     ToolMessage,
     UserMessage,
 )
-from emp_agents.exceptions import DuplicateToolException
 from emp_agents.models.middleware import Middleware
 from emp_agents.providers.openai import OpenAIModelType
 from emp_agents.types import Role
-from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
 from emp_agents.types.mcp import MCPClient, SSEParams
+from emp_agents.utils import count_tokens, execute_tool, summarize_conversation
 
 T = TypeVar("T", bound=BaseModel)
 

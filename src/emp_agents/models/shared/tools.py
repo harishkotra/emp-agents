@@ -1,12 +1,12 @@
 import inspect
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Callable, get_args, get_origin, Self
+from typing import TYPE_CHECKING, Any, Callable, Self, get_args, get_origin
 
 from pydantic import BaseModel, Field
 
-from emp_agents.utils import FunctionSchema, get_function_schema
 from emp_agents.types.mcp import MCPClient
+from emp_agents.utils import FunctionSchema, get_function_schema
 
 if TYPE_CHECKING:
     from emp_agents.agents.base import AgentBase

@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from pydantic import BaseModel, PrivateAttr
 
-from emp_agents.models import GenericTool, FunctionTool
+from emp_agents.models import FunctionTool, GenericTool
 from emp_agents.models.protocol.registry import ToolRegistry
 
 

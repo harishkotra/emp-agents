@@ -1,8 +1,8 @@
 import os
 
-from pydantic import AnyUrl
 from mcp import ClientSession
 from mcp.client.sse import sse_client
+from pydantic import AnyUrl
 
 # Create SSE client configuration
 SSE_URL = os.environ.get("MPC_SSE_URL", "http://localhost:8000/sse")

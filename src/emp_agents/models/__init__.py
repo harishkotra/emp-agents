@@ -1,4 +1,4 @@
-from emp_agents.models.shared.tools import GenericTool, Property, MCPTool, FunctionTool
+from emp_agents.models.shared.tools import FunctionTool, GenericTool, MCPTool, Property
 
 from .middleware import Middleware
 from .provider import Provider, ResponseT
